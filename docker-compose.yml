@@ -1,0 +1,8 @@
+version: '2.4'
+
+services: 
+  iris:
+    build: 
+      context: .
+    ports:
+      - 62773:52773
