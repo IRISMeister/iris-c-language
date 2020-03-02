@@ -5,6 +5,7 @@
 int main(int argc, char * argv[])
 {
   IRIS_ASTR pusername, ppassword, pexename;
+  IRIS_ASTR command;
   int	rc,timeout = 0;
   int len;
   Callin_char_t *gloref="";
@@ -92,23 +93,29 @@ int main(int argc, char * argv[])
   gloref="test2";
   for (int i=1;i<=10;i++) {
     rc = IrisPushGlobal(strlen((const char *)gloref), gloref);
-    printf("IrisPushGlobal rc:%d\n",rc);
+    //printf("IrisPushGlobal rc:%d\n",rc);
 
     sprintf(p, "%d", i);
     rc = IrisPushStr(strlen((const char *)p), p);
-    printf("IrisPushStr rc:%d\n",rc);
+    //printf("IrisPushStr rc:%d\n",rc);
 
     strcpy(p,"abc");
     rc = IrisPushStr(strlen((const char *)p), p);
-    printf("IrisPushStr rc:%d\n",rc);
+    //printf("IrisPushStr rc:%d\n",rc);
 
     rc=IrisGlobalSet(1);  // Set ^test2(i)="abc"
-    printf("IrisGlobalSet rc:%d\n",rc);
+    //printf("IrisGlobalSet rc:%d\n",rc);
     if (rc!=IRIS_SUCCESS) { 
       goto end;
     }
   }
 end:
+
+  /* execute anonymous commands */
+  sprintf(command.str,"s ^a=1"); 
+  command.len = strlen(command.str);
+  rc = IrisExecuteA(&command);
+  printf("IrisExecuteA rc:%d\n",rc);
 
   IrisEnd();
   printf("Exiting.\n");

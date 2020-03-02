@@ -4,7 +4,6 @@ COPY src /opt/iris/
 
 USER root
 
-# Install Apache+PHP
 RUN apt -y update \
  && DEBIAN_FRONTEND=noninteractive apt -y install build-essential \
  && apt clean
