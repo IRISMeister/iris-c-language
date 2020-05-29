@@ -1,3 +1,6 @@
 .vscode
-src/callintest
 src/callout.so
+src/readme.txt
+src/callin_misc
+src/callin_multithreads
+src/callin_unicode_value_test

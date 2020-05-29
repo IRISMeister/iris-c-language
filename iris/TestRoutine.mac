@@ -1,0 +1,20 @@
+ROUTINE TestRoutine
+Entry() public  {
+	Set ^test=$ZDATETIME($H)
+	Quit
+}
+
+Entry2(str,int) public  {
+	Set ^test=$ZDATETIME($H)_";"_str_";"_int
+	Quit 123
+}
+
+Entry3(str) public  {
+	Set ^test=$ZDATETIME($H)_";"_str
+	Quit "abcdefg"
+}
+
+ErrorEntry() public  {
+	Set a=1/0
+	Quit
+}

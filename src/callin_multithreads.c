@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
   
   printf("Starting main process\n");
 
-  rc=IrisSetDir("/usr/irissys/mgr");
+  rc=IRISSETDIR("/usr/irissys/mgr");
   printf("rc:%d\n",rc);
 
   for (i=0; i < numthreads; i++) {
@@ -80,7 +80,7 @@ void *thread_main(void *tparam) {
   printf("Thread #%ld starting authentication in IRIS'\n",pthread_self());
 
   /* Authenticate using username/pw user. */
-  rc = IrisSecureStart(&pusername,&ppassword,&pexename,termflag, timeout, NULL, NULL);
+  rc = IRISSECURESTART(&pusername,&ppassword,&pexename,termflag, timeout, NULL, NULL);
   if (rc != IRIS_SUCCESS) {
     if (rc == IRIS_ACCESSDENIED) {
       printf("(thread #%ld) connect: IRISSecureStart returned Access Denied\n",pthread_self());
@@ -96,7 +96,7 @@ void *thread_main(void *tparam) {
   runtest();
 
   printf("Thread #%ld leaving IRIS'\n",pthread_self());
-  IrisEnd();
+  IRISEND();
 
   printf("Thread #%ld exiting\n",pthread_self());
 
@@ -109,9 +109,9 @@ int runtest() {
 
   printf("Thread #%ld starting test\n",pthread_self());
 
-  sprintf((char *)command.str,"s ^CallinTest($INCREMENT(^CallinTest))=$h_\"/\"_$J h 10+$r(5)");
+  sprintf((char *)command.str,"s ^CallinTest($INCREMENT(^CallinTest))=$h_\"/\"_$J h 5+$r(5)");
   command.len = (unsigned short)strlen((char *)command.str);
-  rc = IrisExecute(&command);
+  rc = IRISEXECUTE(&command);
 
   printf("Thread #%ld has completed test\n",pthread_self());
   return 0;
