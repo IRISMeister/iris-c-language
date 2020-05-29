@@ -168,6 +168,8 @@ int callin_routine_geterrorinfo()
       memcpy(returnval,srcline.str,srcline.len);
       returnval[srcline.len] = '\0';
       printf("IRISERROR [%s]\n",returnval);
+
+      printf("IRISERROR [%d]\n",offset);
     }
   }
 
