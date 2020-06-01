@@ -10,7 +10,7 @@ int main(int argc, char * argv[])
   IRIS_ASTR pusername, ppassword, pexename;
   IRIS_ASTR command;
   int	rc,timeout = 0;
-  int len;
+  int len,subsc;
   Callin_char_t *gloref="unicode";
   Callin_char_t *val="";
   Callin_char_t p[100];
@@ -66,8 +66,7 @@ int main(int argc, char * argv[])
   rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
   printf("IRISPUSHGLOBAL rc:%d\n",rc);
 
-  sprintf(p, "%d", 1);
-  rc = IRISPUSHSTR(strlen((const char *)p), p);
+  rc = IRISPUSHINT(1); subsc++;
   printf("IRISPUSHSTR rc:%d\n",rc);
 
   wchar_t wc[] = L"あいうえお";
@@ -76,10 +75,12 @@ int main(int argc, char * argv[])
   // linux wchar_t is 4 bytes, whilst windows' is 2 bytes....
 #ifdef __linux__
    rc = IRISPUSHSTRH(wcslen((const wchar_t *)wc), wc);
+#else
+   rc = IRISPUSHSTRW(wcslen((const wchar_t *)wc), wc);
 #endif
    printf("IRISPUSHSTRH rc:%d\n",rc);
 
-  rc=IRISGLOBALSET(1);  // Set ^test2(i)="abc"
+  rc=IRISGLOBALSET(subsc);  // Set ^test2(i)="abc"
    
   printf("IRISGLOBALSET rc:%d\n",rc);
   if (rc!=IRIS_SUCCESS) { 

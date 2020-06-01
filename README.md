@@ -4,13 +4,13 @@ Multi-thread Callin (callint) will set ^CallinTest global nodes from within each
 Callout (callout.so) will add two given integers and returns it.  
 # How to RUN
 
-Start IRIS.
+## Start IRIS.
 ```bash
 user@host:~/iris-c-language$ docker-compose up -d
 user@host:~/iris-c-language$ docker-compose exec iris bash
 irisowner@ec21549f2063:~$
 ```
-Various tests.
+## Various tests.
 ```bash
 irisowner@ec21549f2063:~$ cd src
 irisowner@ec21549f2063:~/src$ ./callin_misc
@@ -58,7 +58,8 @@ USER>zw ^test2
 ^test2(10)="abc"
 USER>h
 ```
-Multithreads test.
+## Multithreads test.
+You can't stop a program which was linked against IRIS multi-threads library via Ctrl-c.
 ```bash
 irisowner@ec21549f2063:~/src$ ./callin_multithreads
 Starting main process
@@ -86,14 +87,14 @@ irisowner@ec21549f2063:~/src$ iris session iris
 ノード: ec21549f2063 インスタンス: IRIS
 ```
 ```ObjectScript
-USER>zw ^CallinTest
-^CallinTest=3
-^CallinTest(1)="65527,70243/628.00013"
-^CallinTest(2)="65527,70243/628.00020"
-^CallinTest(3)="65527,70243/628.00023"
+USER>zw ^callinMT
+^callinMT=3
+^callinMT(1)="2020/06/01 Mon 15:19:03"
+^callinMT(2)="2020/06/01 Mon 15:19:04"
+^callinMT(3)="2020/06/01 Mon 15:19:05"
 USER>
 ```
-Unicode tests.
+## Unicode tests.
 ```bash
 irisowner@ec21549f2063:~/src$ ./callin_unicode_value_test
 locale ja_JP.UTF-8.
@@ -113,7 +114,7 @@ USER>zw ^unicode
 ^unicode(1)="あいうえお"
 USER>h
 ```
-CallOut tests.  
+## CallOut tests.  
 "AddInt" add given two numeric values.  
 "AddIntSave" does the same and then save it as a global. (a combination of callout and callin)
 ```ObjectScript
@@ -131,11 +132,10 @@ exit
 user@host:~/iris-c-language$
 ```
 
-Stop IRIS.
+## Stop IRIS.
 ```bash
 user@host:~/iris-c-language$ docker-compose stop
 ```
-
 
 If you want to run callin programs against non-container version of IRIS, you need to execute it as user 'irisowner'. 
 $ sudo -u irisowner ./callin

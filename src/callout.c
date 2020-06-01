@@ -4,30 +4,34 @@
 #include <stdio.h>
 #include <string.h>
 
-int AddTwoIntegers(int a, int b, int*outsum) {
+int addTwoIntegers(int a, int b, int*outsum) {
    *outsum = a+b;   /* set value to be returned by the $ZF function call */
    return 0;   /* set the exit status code */
 }
 
-int AddTwoIntegersAndSave(int a, int b, int*outsum) {
+int addTwoIntegersAndSave(int a, int b, int*outsum) {
    int	rc = 0;
    Callin_char_t *gloref="callout";
    Callin_char_t p[100];
 
    *outsum = a+b;   /* set value to be returned by the $ZF function call */
    rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
-   //printf("IrisPushGlobal rc:%d\n",rc);
+   rc = IRISPUSHINT(1);
+   rc = IRISPUSHINT(*outsum);
+   rc=IRISGLOBALSET(1);  // Set ^callout(1)=outsum
+   if (rc!=IRIS_SUCCESS) { 
+      return -1;
+   }
 
-   sprintf(p, "%d", 1);
-   rc = IRISPUSHSTR(strlen((const char *)p), p);
-   //printf("IrisPushStr rc:%d\n",rc);
+   return 0;   /* set the exit status code */
+}
+int waitIRISEvent() {
+   int rc;
+   IRIS_ASTR command;
 
-   sprintf(p, "%d", *outsum);
-   rc = IRISPUSHSTR(strlen((const char *)p), p);
-   //printf("IrisPushStr rc:%d\n",rc);
-
-   rc=IRISGLOBALSET(1);  // Set ^callout(1)="abc"
-      //printf("IrisGlobalSet rc:%d\n",rc);
+   sprintf((char *)command.str,"L +wait s ^wait($INCREMENT(^wait))=$ZDATETIME($H)_\"/\"_$J L -wait");
+   command.len = (unsigned short)strlen((char *)command.str);
+   rc = IRISEXECUTE(&command);
    if (rc!=IRIS_SUCCESS) { 
       return -1;
    }
@@ -36,6 +40,7 @@ int AddTwoIntegersAndSave(int a, int b, int*outsum) {
 }
 
 ZFBEGIN
-   ZFENTRY("AddInt","iiP",AddTwoIntegers)
-   ZFENTRY("AddIntSave","iiP",AddTwoIntegersAndSave)
+   ZFENTRY("AddInt","iiP",addTwoIntegers)
+   ZFENTRY("AddIntSave","iiP",addTwoIntegersAndSave)
+   ZFENTRY("WaitIRISEvent","",waitIRISEvent)
 ZFEND

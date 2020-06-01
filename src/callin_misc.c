@@ -59,6 +59,7 @@ int main(int argc, char * argv[])
   callin_classmethod_call1();
   callin_classmethod_call2();
   callin_globals_set_and_get();
+  callin_execute();
 
   IRISEND();
   printf("Exiting.\n");

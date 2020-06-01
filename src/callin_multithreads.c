@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <unistd.h>
 #include "iris-callin.h"
 
 int	runtest();
@@ -105,13 +106,36 @@ void *thread_main(void *tparam) {
 
 int runtest() {
   int rc;
-  IRIS_ASTR command;
+  Callin_char_t *gloref="callinMT";
+  unsigned int newId;
+  char date[64];
 
   printf("Thread #%ld starting test\n",pthread_self());
 
-  sprintf((char *)command.str,"s ^CallinTest($INCREMENT(^CallinTest))=$h_\"/\"_$J h 5+$r(5)");
-  command.len = (unsigned short)strlen((char *)command.str);
-  rc = IRISEXECUTE(&command);
+  // Do some dummy work
+  sleep(rand()%5+1);
+
+  //Get local timestamp
+  time_t t = time(NULL);
+  struct tm local;
+  localtime_r(&t,&local);
+  strftime(date, sizeof(date), "%Y/%m/%d %a %H:%M:%S", &local);
+
+  // Get new sequence value.  Equivalent of Set newId=$INCREMENT(^callinMT)
+  rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
+  rc = IRISPUSHINT(1); // Increment by 1
+  rc = IRISGLOBALINCREMENT(0);
+  rc = IRISPOPINT(&newId);
+
+  // Set ^callinMT(newId)=timestamp
+  int subsc=0;
+  rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
+  rc = IRISPUSHINT(newId); subsc++;     /* subscript */
+  rc = IRISPUSHSTR(strlen(date),date);  /* value */
+  rc = IRISGLOBALSET(subsc);  
+  if (rc!=IRIS_SUCCESS) { 
+    return -1;
+  }
 
   printf("Thread #%ld has completed test\n",pthread_self());
   return 0;
