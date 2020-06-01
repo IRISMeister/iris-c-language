@@ -18,7 +18,7 @@ int main(int argc, char * argv[])
 	pexename.len = (unsigned short)strlen((char *) pexename.str);
 
   rc=IRISSETDIR("/usr/irissys/mgr");
-  printf("rc:%d\n",rc);
+  printf("IRISSETDIR rc:%d\n",rc);
 
   rc = IRISSECURESTART(&pusername, &ppassword, &pexename, IRIS_PROGMODE|IRIS_TTNONE , timeout, NULL, NULL);
   char* sMes;

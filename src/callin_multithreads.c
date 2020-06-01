@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
   printf("Starting main process\n");
 
   rc=IRISSETDIR("/usr/irissys/mgr");
-  printf("rc:%d\n",rc);
+  printf("IRISSETDIR rc:%d\n",rc);
 
   for (i=0; i < numthreads; i++) {
     rtn = pthread_create(&th[i], NULL, thread_main, (void *) NULL);
