@@ -6,3 +6,5 @@ src/callin_unicode_value_test
 src/callin_error
 src/*.o
 src/lib
+src/sap1238.c
+src/sap1238

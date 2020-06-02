@@ -31,7 +31,7 @@ int main(int argc, char * argv[])
   rc=IRISSETDIR("/usr/irissys/mgr");
   printf("IRISSETDIR rc:%d\n",rc);
 
-  rc = IRISSECURESTART(&pusername, &ppassword, &pexename, IRIS_PROGMODE|IRIS_TTNONE , timeout, NULL, NULL);
+  rc = IRISSECURESTART(&pusername, &ppassword, &pexename, IRIS_TTNONE|IRIS_TTNEVER , timeout, NULL, NULL);
   char* sMes;
   switch (rc)
   {

@@ -3,7 +3,7 @@ CFLAGS        = -g3 -O3 -I /usr/irissys/dev/iris-callin/include
 LDFLAGS       = -L/usr/irissys/bin -Wl,-rpath,/usr/irissys/bin
 LIBS          = -lirisdb
 LIBSMT        = -lirisdbt
-PROGRAM       = callin_misc callin_unicode_value_test callin_multithreads callout.so callin_error
+PROGRAM       = callin_misc callin_unicode_value_test callin_multithreads callout.so callin_error sap1238
 
 all:            $(PROGRAM)
 
@@ -15,6 +15,9 @@ callin_unicode_value_test:	callin_unicode_value_test.o
 
 callin_multithreads:	callin_multithreads.o
 	$(CC) callin_multithreads.o $(LDFLAGS) $(LIBSMT) -pthread -o callin_multithreads
+
+sap1238:	sap1238.o
+	$(CC) sap1238.o $(LDFLAGS) $(LIBSMT) -pthread -o sap1238
 
 callin_error:	callin_error.o
 	$(CC) callin_error.o $(LDFLAGS) $(LIBS) -o callin_error
