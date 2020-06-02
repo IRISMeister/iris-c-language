@@ -14,8 +14,8 @@ void sigaction_handler();
 void signal_handler();
 #endif
 
-// non-threadは、関係ないのか、登録したユーザハンドラが呼ばれることはなかった。
-// ごみプロセスも残らなかった。IRIS側で処理した模様。
+// non-threadライブラリでは、IRISとのセッション確立後は(IRISSTART～IRISEND)は、登録したユーザハンドラが呼ばれることは無い。
+// IRIS側で処理される。ごみプロセスも残らない。message.logに下記が記録される。
 // 06/01/20-17:39:40:377 (117592) 3 [Generic.Event] Process 117592 (JobType=Callin Connection,Dumpstyle=0,Directory='/usr/irissys/mgr/user/') caught signal 11.
 // 06/01/20-17:39:40:377 (117592) 3 [Generic.Event] Parent process will clean up and halt
 // 06/01/20-17:39:40:377 (117592) 3 [Generic.Event] If core dumps are enabled, a core file will be created by process 117593 in the location specified by the system configuration.
@@ -51,63 +51,30 @@ int main(void)
 
   rc=IRISSETDIR("/usr/irissys/mgr");
   printf("IRISSETDIR rc:%d\n",rc);
-  
-  /* 
-  https://docs.intersystems.com/irislatest/csp/docbook/Doc.View.cls?KEY=BXCI_callin#BXCI_callin_tips_general
-  Doc says, 
-  Avoid signal handling when using IrisStart()
-  IrisStart sets handlers for various signals, which may conflict with signal handlers set by the calling application.
-  Is this applies to IRISSECURESTART() as well?
-  */
 
   rc = IRISSECURESTART(&pusername, &ppassword, &pexename, IRIS_TTNONE|IRIS_TTNEVER , timeout, NULL, NULL);
-  char* sMes;
-  switch (rc)
-  {
-    case IRIS_ACCESSDENIED:
-      sMes = "Authentication has failed. Check the audit log for the real authentication error.";
-      break;
-    case IRIS_ALREADYCON:
-      sMes = "Connection already existed. Returned if you call IrisSecureStartH from a $ZF function.";
-      break;
-    case IRIS_CHANGEPASSWORD:
-      sMes = "Password change required. This return value is only returned if you are using InterSystems authentication.";
-      break;
-    case IRIS_CONBROKEN:
-      sMes = "Connection was formed and then broken, and IrisEnd has not been called to clean up.";
-      break;
-    case IRIS_STRTOOLONG:
-      sMes = "prinp or prout is too long.";
-      break;
-    case IRIS_SUCCESS:
-      sMes = "Success.";
-      break;
-    case IRIS_FAILURE:
-    default:
-      sMes = "An unexpected error has occurred.";
-  }
-  printf("IRISSECURESTART Status :%s %d \n",sMes,rc);
-  if (rc) { 
-    IRISEND(); 
-    exit(1);
-  }
+  printf("IRISSECURESTART Status :%d \n",rc);
+  if (rc) exit(1);
 
-    sleep(10);
-    *foo = 1;    /* Cause a seg fault */
+  sleep(5);
+  *foo = 1;     /* Cause a seg fault. This will not call sigaction_handler() */
 
-    IRISEND(); 
-    return 0;
+  IRISEND(); 
+  //*foo = 1;   /* Cause a seg fault. This will call sigaction_handler() because iris session is already over */
+
+  printf("Ending main()\n");
+  exit(0);
 }
 
 #ifdef usesigaction
 void sigaction_handler(int signal, siginfo_t *si, void *arg)
 {
-    printf("Caught segfault via sigaction() at address %p\n", si->si_addr);
+    printf("Caught segfault via sigaction_handler().\n"); 
     exit(0);
 }
 #else
 void signal_handler(int sig) {
-    printf("Caught segfault via signal()\n" );
+    printf("Caught segfault via signal_handler()\n" );
     exit(0);
 }
 #endif

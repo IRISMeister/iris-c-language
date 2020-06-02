@@ -10,7 +10,6 @@
 
 /*
 SIGINTのハンドラが、IRISが起動していなくてIRISSTARTが失敗した時に有効化されない模様。Ctrl-cでハンドラが呼ばれることなくイメージが終了してしまう。
-何かがリストアされていないのでは？
 IRISSTART()成功時には有効→Ctrl-cでsigaction_handler_asyncが動作する
 IRISSTART()を全く呼ばない場合も有効→Ctrl-cでsigaction_handler_asyncが動作する
 IRISSTART()成功後にIRISEND()を実行した場合も(//runtest(*p);)有効→Ctrl-cでsigaction_handler_asyncが動作する
@@ -214,13 +213,13 @@ void sigaction_handler(int signal, siginfo_t *si, void *arg)
     printf("Caught signal #%ld\n",pthread_self());
     // Somehow si is not sset... ?
     if (si!=NULL) printf("Caught signal(%d) via sigaction_handler() Thread #%ld\n", si->si_signo,pthread_self());
-    //IRISEND();  // calling IRISEND() here may cause another SIGSEGV  
+    //IRISEND();  // Do not call IRISEND() here. It causes another SIGSEGV  
     pthread_exit(0);
 }
 #else
 void signal_handler(int sig) {
     printf("Caught segfault via signal() Thread #%ld\n",pthread_self());
-    //IRISEND();  // calling IRISEND() here may cause another SIGSEGV  
+    //IRISEND();  // Do not call IRISEND() here. It causes another SIGSEGV  
     pthread_exit(0);
 }
 #endif
