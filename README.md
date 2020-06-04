@@ -62,24 +62,29 @@ USER>h
 You can't stop a program which was linked against IRIS multi-threads library via Ctrl-c.
 ```bash
 irisowner@ec21549f2063:~/src$ ./callin_multithreads
-Starting main process
-rc:0
-Thread #140380113082112 starting authentication in IRIS'
+Starting main process. #140432145268544
+Starting thread_noiris_main #140432109364992
+IRISSETDIR rc:0
+Thread(0) #140432100972288 starting authentication in IRIS'
+Thread(1) #140432092579584 starting authentication in IRIS'
 Waiting for threads to exit...
-Thread #140380096296704 starting authentication in IRIS'
-Thread #140380104689408 starting authentication in IRIS'
-Thread #140380113082112 starting test
-Thread #140380096296704 starting test
-Thread #140380104689408 starting test
-Thread #140380096296704 has completed test
-Thread #140380096296704 leaving IRIS'
-Thread #140380096296704 exiting
-Thread #140380113082112 has completed test
-Thread #140380113082112 leaving IRIS'
-Thread #140380113082112 exiting
-Thread #140380104689408 has completed test
-Thread #140380104689408 leaving IRIS'
-Thread #140380104689408 exiting
+Thread(2) #140432084186880 starting authentication in IRIS'
+Thread(1) #140432092579584 starting test
+Thread(0) #140432100972288 starting test
+Thread(2) #140432084186880 starting test
+^CSignal caught by #140432145268544            <= type Ctrl-c to interrupt
+si_signo:2 si_code:128 si_pid:0 si_uid:0
+Ending thread_noiris_main #140432109364992
+Thread(2) #140432084186880 has completed test
+Thread(2) #140432084186880 leaving IRIS'
+Thread(2) #140432084186880 exiting
+Thread(1) #140432092579584 has completed test
+Thread(1) #140432092579584 leaving IRIS'
+Thread(1) #140432092579584 exiting
+Thread(0) #140432100972288 has completed test
+Thread(0) #140432100972288 leaving IRIS'
+Thread(0) #140432100972288 exiting
+Join th2
 All threads have exited - done
 irisowner@ec21549f2063:~/src$
 irisowner@ec21549f2063:~/src$ iris session iris
@@ -88,23 +93,39 @@ irisowner@ec21549f2063:~/src$ iris session iris
 ```
 ```ObjectScript
 USER>zw ^callinMT
-^callinMT=3
-^callinMT(1)="2020/06/01 Mon 15:19:03"
-^callinMT(2)="2020/06/01 Mon 15:19:04"
-^callinMT(3)="2020/06/01 Mon 15:19:05"
+^callinMT=4
+^callinMT(1)="threadId:140432100972288 @ 2020/06/04 Thu 17:20:35"
+^callinMT(2)="threadId:140432084186880 @ 2020/06/04 Thu 17:20:36"
+^callinMT(3)="threadId:140432092579584 @ 2020/06/04 Thu 17:20:37"
+^callinMT(4)="threadId:140432100972288 @ 2020/06/04 Thu 17:20:40"
 USER>
 ```
-## Unicode tests.
+## Various data (Unicode, Long Ascii String, Long Unicode String) tests.
 ```bash
-irisowner@ec21549f2063:~/src$ ./callin_unicode_value_test
+irisowner@ec21549f2063:~/src$ ./callin_misc_value_test
 locale ja_JP.UTF-8.
-rc:0
-IrisSecureStartA Status :Success.
-IrisPushGlobal rc:0
-IrisPushStr rc:0
+IRISSETDIR rc:0
+IrisSecureStartA Status :0
+========= Setting Unicode Value.
+IRISPUSHGLOBAL rc:0
+IRISPUSHINT rc:0
 Pushing ... value:あいうえお length:5  size of one letter:4
-IrisPushStr rc:0
-IrisGlobalSet rc:0
+IRISPUSHSTRH rc:0
+IRISGLOBALSET rc:0
+========= Setting long ascii String.
+strlen 1000000
+IRISPUSHGLOBAL rc:0
+IRISPUSHINT rc:0
+IRISPUSHEXSTR rc:0
+IRISGLOBALSET rc:0
+IRISEXSTRKILL rc:0
+========= Setting long Unicode String.
+wcslen 1000000
+IRISPUSHGLOBAL rc:0
+IRISPUSHINT rc:0
+IRISPUSHEXSTRH rc:0
+IRISGLOBALSET rc:0
+IRISEXSTRKILL rc:0
 Exiting.
 irisowner@ec21549f2063:~/src$ iris session iris
 ノード: ec21549f2063 インスタンス: IRIS
@@ -112,6 +133,14 @@ irisowner@ec21549f2063:~/src$ iris session iris
 ```ObjectScript
 USER>zw ^unicode
 ^unicode(1)="あいうえお"
+USER>w $L(^long(1))
+1000000
+USER>w $E(^long(1),$L(^long(1))-10,*)
+AAAAAAAAAAA
+USER>w $L(^long(2))
+1000000
+USER>w $E(^long(2),$L(^long(2))-10,*)
+あああああああああああ
 USER>h
 ```
 ## CallOut tests.  

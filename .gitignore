@@ -1,10 +1,13 @@
 src/callout.so
 src/readme.txt
 src/callin_misc
+src/callin_misc_value_test
 src/callin_multithreads
-src/callin_unicode_value_test
 src/callin_error
 src/*.o
 src/lib
 src/sap1238.c
 src/sap1238
+src/sampcallin.c
+src/sampcallint.c
+src/Makefile.cache

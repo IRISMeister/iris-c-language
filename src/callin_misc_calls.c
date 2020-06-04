@@ -296,8 +296,7 @@ int callin_globals_set_and_get()
     rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
     //printf("IRISPUSHGLOBAL rc:%d\n",rc);
 
-    sprintf(p, "%d", i);
-    rc = IRISPUSHSTR(strlen((const char *)p), p);
+    rc = IRISPUSHINT(i);
     //printf("IRISPUSHSTR rc:%d\n",rc);
 
     strcpy(p,"abc");

@@ -1,35 +1,31 @@
+/*
+  https://docs.intersystems.com/irislatest/csp/docbook/Doc.View.cls?KEY=BXCI_callin#BXCI_callin_multithreading_signals
+*/
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
-#include "iris-callin.h"
 #include <signal.h>
+#include "iris-callin.h"
 
-// https://docs.intersystems.com/irislatest/csp/docbook/Doc.View.cls?KEY=BXCI_callin#BXCI_callin_multithreading_signals
 
-/*
-SIGINTのハンドラが、IRISが起動していなくてIRISSTARTが失敗した時に有効化されない模様。Ctrl-cでハンドラが呼ばれることなくイメージが終了してしまう。
-IRISSTART()成功時には有効→Ctrl-cでsigaction_handler_asyncが動作する
-IRISSTART()を全く呼ばない場合も有効→Ctrl-cでsigaction_handler_asyncが動作する
-IRISSTART()成功後にIRISEND()を実行した場合も(//runtest(*p);)有効→Ctrl-cでsigaction_handler_asyncが動作する
+#define ADD_ASYNC 1     // add async signal handler
 
-*/
-#define usesigaction 1
+#define ADD_NON_IRIS 1    // add a thread which doesn't connect to IRIS
 
-#ifdef usesigaction
 void sigaction_handler();
-#else
-void signal_handler();
-#endif
 
 int	runtest();
 void *thread_main(void *);          // threads which connect to IRIS
-#if 1
+#ifdef ADD_NON_IRIS
 void *thread_noiris_main(void *);   // a thread for non IRIS
-void sigaction_handler_async();     // signal handler for Asynchronous signals
-volatile sig_atomic_t eflag = 0;    // flag to end thread_noiris_main
 #endif 
+#ifdef ADD_ASYNC
+void sigaction_handler_async();     // signal handler for Asynchronous signals
+#endif
+
+volatile sig_atomic_t eflag = 0;    // flag to end the loop
 
 #define NUMTHREADS 3	/* Number of threads */
 
@@ -56,21 +52,15 @@ int main(int argc, char* argv[])
   printf("Starting main process. #%ld\n",pthread_self());
 
   // signal handler for Synchronous signals
-#ifdef usesigaction
   struct sigaction sa;
   memset(&sa, 0, sizeof(struct sigaction));
   sigemptyset(&sa.sa_mask);
   sa.sa_sigaction = sigaction_handler;
   sa.sa_flags   = SA_SIGINFO;
   sigaction(SIGSEGV, &sa, NULL);
-#else
-  if ( signal(SIGSEGV, signal_handler) == SIG_ERR ) {
-    pthread_exit(0);
-  } 
-#endif
 
   // signal handler for Asynchronous signals, such as SIGINT
-#if 1
+#ifdef ADD_ASYNC
   struct sigaction sa_asyncsig;
   memset(&sa_asyncsig, 0, sizeof(sa_asyncsig));
   sa_asyncsig.sa_sigaction = sigaction_handler_async;
@@ -81,16 +71,22 @@ int main(int argc, char* argv[])
   }
 #endif
 
+#ifdef ADD_NON_IRIS
   // creating a non IRIS thread
-  rtn = pthread_create(&th2, NULL, thread_noiris_main, (void *) NULL);
+  rc = pthread_create(&th2, NULL, thread_noiris_main, (void *) NULL);
+#endif
 
+	/* 
+    NOTE:  The call to IRISSETDIR is required to set the installation directory value
+	  when linking using a shared library (.dll, or .so) on Windows, and some Unix platforms.
+	*/
   rc=IRISSETDIR("/usr/irissys/mgr");
   printf("IRISSETDIR rc:%d\n",rc);
 
   for (i=0; i < numthreads; i++) {
     targ[i]=i;
-    rtn = pthread_create(&th[i], NULL, thread_main, (void *) &targ[i]);
-    if (rtn != 0) {
+    rc = pthread_create(&th[i], NULL, thread_main, (void *) &targ[i]);
+    if (rc) {
         fprintf(stderr, "pthread_create() #%0d failed for %d.", i, rtn);
         exit(EXIT_FAILURE);
     }
@@ -100,7 +96,7 @@ int main(int argc, char* argv[])
   for (i=0; i < numthreads; i++) {
     pthread_join(th[i], NULL);
   }
-#if 1
+#ifdef ADD_NON_IRIS
   printf("Join th2\n");
   pthread_join(th2, NULL);
 #endif
@@ -141,16 +137,12 @@ void *thread_main(void *tparam) {
   /* Authenticate using username/pw user. */
   rc = IRISSECURESTART(&pusername,&ppassword,&pexename,termflag, timeout, NULL, NULL);
   if (rc != IRIS_SUCCESS) {
+    printf("Thread(%d) #%ld : IRISSecureStart returned %d\n",*p,pthread_self(), rc);
     IRISEND();
-    if (rc == IRIS_ACCESSDENIED) {
-      printf("Thread(%d) #%ld : IRISSecureStart returned Access Denied\n",*p,pthread_self());
-    }
-    else if (rc == IRIS_CHANGEPASSWORD) {
-      printf("Thread(%d) #%ld : IRISsecureStart returned Password Change Required\n",*p,pthread_self());
-    }
-    else {
-      printf("Thread(%d) #%ld : IRISSecureStart returned %d\n",*p,pthread_self(), rc);
-    }
+    /*
+    int *foo = NULL;
+    if (*p==0) { *foo=1; }
+    */
     return NULL;
   }
 
@@ -171,21 +163,18 @@ int runtest(int p) {
   char date[64];
   time_t t;
   struct tm local;
+  char data[100];
   int *foo = NULL;
 
   printf("Thread(%d) #%ld starting test\n",p,pthread_self());
 
   // Uncomment a below line to tigger SIGSEGV intentionally.
-  if (p==0) { printf("Thread(%d) #%ld is firing SIGSEGV.\n",p,pthread_self()); *foo = 1; } 
+  // if (p==0) { printf("Thread(%d) #%ld is firing SIGSEGV.\n",p,pthread_self()); *foo = 1; } 
 
   while ( !eflag ) {
 
     // Do some dummy work
     sleep(rand()%5+5);
-
-    t=time(NULL);
-    localtime_r(&t,&local);
-    strftime(date, sizeof(date), "%Y/%m/%d %a %H:%M:%S", &local);
 
     // Get new sequence value.  Equivalent of Set newId=$INCREMENT(^callinMT)
     rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
@@ -193,11 +182,17 @@ int runtest(int p) {
     rc = IRISGLOBALINCREMENT(0);
     rc = IRISPOPINT(&newId);
 
-    // Set ^callinMT(newId)=timestamp
+    // Set ^callinMT(newId)="threadId:"_tid_" @ "_timestamp
+    t=time(NULL);
+    localtime_r(&t,&local);
+    strftime(date, sizeof(date), "%Y/%m/%d %a %H:%M:%S", &local);
+    sprintf(data,"threadId:%ld @ ",pthread_self());
+    strcat(data,date);
+
     int subsc=0;
     rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
     rc = IRISPUSHINT(newId); subsc++;     /* subscript */
-    rc = IRISPUSHSTR(strlen(date),date);  /* value */
+    rc = IRISPUSHSTR(strlen(data),data);  /* value */
     rc = IRISGLOBALSET(subsc);  
     if (rc!=IRIS_SUCCESS) { 
       return -1;
@@ -207,7 +202,6 @@ int runtest(int p) {
   return 0;
 }
 
-#ifdef usesigaction
 void sigaction_handler(int signal, siginfo_t *si, void *arg)
 {
     printf("Caught signal #%ld\n",pthread_self());
@@ -216,30 +210,23 @@ void sigaction_handler(int signal, siginfo_t *si, void *arg)
     //IRISEND();  // Do not call IRISEND() here. It causes another SIGSEGV  
     pthread_exit(0);
 }
-#else
-void signal_handler(int sig) {
-    printf("Caught segfault via signal() Thread #%ld\n",pthread_self());
-    //IRISEND();  // Do not call IRISEND() here. It causes another SIGSEGV  
-    pthread_exit(0);
-}
-#endif
-#if 1
+
+#ifdef ADD_ASYNC
 void sigaction_handler_async(int sig, siginfo_t *info, void *ctx) {
   printf("Signal caught by #%ld\n",pthread_self());
-  if (info!=NULL) {
-    printf("si_signo:%d\nsi_code:%d\n", info->si_signo, info->si_code);
-    printf("si_pid:%d\nsi_uid:%d\n", (int)info->si_pid, (int)info->si_uid);
-  }
+  if (info!=NULL) printf("si_signo:%d si_code:%d si_pid:%d si_uid:%d\n", info->si_signo, info->si_code,(int)info->si_pid, (int)info->si_uid);
   eflag = 1;
   // Do not exit here because doing so will leave child processes (IRIS processes) as zombie...
   // Instead, set eflag to finish threads which is connected to IRIS via IRISSTART(). 
 }
 #endif
 
+#ifdef ADD_NON_IRIS
 void *thread_noiris_main(void *tparam) {
   printf("Starting %s #%ld\n",__func__,pthread_self());
   while ( !eflag ) { sleep(1); }
   printf("Ending %s #%ld\n", __func__,pthread_self());
   return 0;
 }
+#endif
 

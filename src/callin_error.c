@@ -6,19 +6,17 @@
 #include <string.h>
 #include <unistd.h>
 
-#define usesigaction 1
+//#define USE_SIGNAL 1
+#define ADD_ASYNC 1     // add async signal handler
 
-#ifdef usesigaction
-void sigaction_handler();
-#else
+#ifdef USE_SIGNAL
 void signal_handler();
+#else
+void sigaction_handler();
 #endif
-
-// non-threadライブラリでは、IRISとのセッション確立後は(IRISSTART～IRISEND)は、登録したユーザハンドラが呼ばれることは無い。
-// IRIS側で処理される。ごみプロセスも残らない。message.logに下記が記録される。
-// 06/01/20-17:39:40:377 (117592) 3 [Generic.Event] Process 117592 (JobType=Callin Connection,Dumpstyle=0,Directory='/usr/irissys/mgr/user/') caught signal 11.
-// 06/01/20-17:39:40:377 (117592) 3 [Generic.Event] Parent process will clean up and halt
-// 06/01/20-17:39:40:377 (117592) 3 [Generic.Event] If core dumps are enabled, a core file will be created by process 117593 in the location specified by the system configuration.
+#ifdef ADD_ASYNC
+void sigaction_handler_async();     // signal handler for Asynchronous signals
+#endif
 
 int main(void)
 {
@@ -26,20 +24,30 @@ int main(void)
   IRIS_ASTR pusername, ppassword, pexename;
   int	rc,timeout = 0;
   const char *username="_SYSTEM", *password="SYS";
+  int *foo = NULL;
 
-    int *foo = NULL;
-
-#ifdef usesigaction
+#ifdef USE_SIGNAL
+  if ( signal(SIGSEGV, signal_handler) == SIG_ERR ) {
+    exit(1);
+  } 
+#else
     struct sigaction sa;
     memset(&sa, 0, sizeof(struct sigaction));
     sigemptyset(&sa.sa_mask);
     sa.sa_sigaction = sigaction_handler;
     sa.sa_flags   = SA_SIGINFO;
     sigaction(SIGSEGV, &sa, NULL);
-#else
-  if ( signal(SIGSEGV, signal_handler) == SIG_ERR ) {
-    exit(1);
-  } 
+#endif
+
+  // signal handler for Asynchronous signals, such as SIGINT
+#if ADD_ASYNC
+  struct sigaction sa_asyncsig;
+  memset(&sa_asyncsig, 0, sizeof(sa_asyncsig));
+  sa_asyncsig.sa_sigaction = sigaction_handler_async;
+  sa_asyncsig.sa_flags = SA_SIGINFO;
+
+  if ( sigaction(SIGINT, &sa_asyncsig, NULL) < 0 ) { exit(1); }
+  if ( sigaction(SIGHUP, &sa_asyncsig, NULL) < 0 ) { exit(1); }
 #endif
 
   strcpy((char *) pusername.str, username);
@@ -56,25 +64,34 @@ int main(void)
   printf("IRISSECURESTART Status :%d \n",rc);
   if (rc) exit(1);
 
-  sleep(5);
-  *foo = 1;     /* Cause a seg fault. This will not call sigaction_handler() */
+  printf("sleeping...\n");
+  sleep(10);
 
-  IRISEND(); 
-  //*foo = 1;   /* Cause a seg fault. This will call sigaction_handler() because iris session is already over */
+  //*foo = 1; /* Cause a seg fault. This will not call sigaction_handler() */
+  rc=IRISEND(); 
+  printf("IRISEND Status :%d \n",rc);
+  //*foo = 1; /* Cause a seg fault. This will call sigaction_handler() */
 
   printf("Ending main()\n");
   exit(0);
 }
 
-#ifdef usesigaction
-void sigaction_handler(int signal, siginfo_t *si, void *arg)
-{
-    printf("Caught segfault via sigaction_handler().\n"); 
+#ifdef USE_SIGNAL
+void signal_handler(int sig) {
+    printf("Caught signal via signal_handler()\n" );
     exit(0);
 }
 #else
-void signal_handler(int sig) {
-    printf("Caught segfault via signal_handler()\n" );
+void sigaction_handler(int signal, siginfo_t *si, void *arg)
+{
+    printf("Caught signal via sigaction_handler().\n"); 
     exit(0);
+}
+#endif
+
+#if ADD_ASYNC
+void sigaction_handler_async(int sig, siginfo_t *info, void *ctx) {
+  printf("Caught signal via sigaction_handler_async().\n"); 
+  if (info!=NULL) printf("si_signo:%d si_code:%d si_pid:%d si_uid:%d\n", info->si_signo, info->si_code,(int)info->si_pid, (int)info->si_uid);
 }
 #endif
