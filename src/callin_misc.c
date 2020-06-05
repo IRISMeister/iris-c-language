@@ -8,13 +8,13 @@ int main(int argc, char * argv[])
 {
   IRIS_ASTR pusername, ppassword, pexename;
   int	rc,timeout = 0;
-  const char *username="_SYSTEM", *password="SYS";
+  const char *username="_SYSTEM", *password="SYS",*exename="callin_misc";
 
   strcpy((char *) pusername.str, username);
   pusername.len = strlen(pusername.str);
   strcpy((char *) ppassword.str, password);
   ppassword.len = strlen(ppassword.str);  
-	strcpy((char *) pexename.str,"callintest");
+	strcpy((char *) pexename.str,exename);
 	pexename.len = (unsigned short)strlen((char *) pexename.str);
 
   rc=IRISSETDIR("/usr/irissys/mgr");
@@ -61,6 +61,9 @@ int main(int argc, char * argv[])
   callin_classmethod_call2();
   callin_globals_set_and_get();
   callin_execute();
+  callin_value_unicode();
+  callin_value_long_ascii();
+  callin_value_long_unicode();
 
   IRISEND();
   printf("Exiting.\n");

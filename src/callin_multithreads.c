@@ -117,8 +117,6 @@ void *thread_main(void *tparam) {
   int	rc;
   int retval=1;
   
-  strcpy((char *) pexename.str,"samplecallint");
-  pexename.len = strlen((char *) pexename.str);
 
   /*
   strcpy((char *) pin.str,"/dev/null");
@@ -129,8 +127,10 @@ void *thread_main(void *tparam) {
 
   strcpy((char *) pusername.str,"_SYSTEM");
   strcpy((char *) ppassword.str,"SYS");
+  strcpy((char *) pexename.str,"callin_multithreads");
   pusername.len = strlen((char *) pusername.str);
   ppassword.len = strlen((char *)ppassword.str);
+  pexename.len = strlen((char *) pexename.str);
 
   printf("Thread(%d) #%ld starting authentication in IRIS'\n",*p,pthread_self());
 
@@ -189,11 +189,11 @@ int runtest(int p) {
     sprintf(data,"threadId:%ld @ ",pthread_self());
     strcat(data,date);
 
-    int subsc=0;
+    int numargs=0;
     rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
-    rc = IRISPUSHINT(newId); subsc++;     /* subscript */
-    rc = IRISPUSHSTR(strlen(data),data);  /* value */
-    rc = IRISGLOBALSET(subsc);  
+    rc = IRISPUSHINT(newId); numargs++; 
+    rc = IRISPUSHSTR(strlen(data),data);
+    rc = IRISGLOBALSET(numargs);  
     if (rc!=IRIS_SUCCESS) { 
       return -1;
     }
@@ -204,20 +204,23 @@ int runtest(int p) {
 
 void sigaction_handler(int signal, siginfo_t *si, void *arg)
 {
-    printf("Caught signal #%ld\n",pthread_self());
-    // Somehow si is not sset... ?
-    if (si!=NULL) printf("Caught signal(%d) via sigaction_handler() Thread #%ld\n", si->si_signo,pthread_self());
-    //IRISEND();  // Do not call IRISEND() here. It causes another SIGSEGV  
-    pthread_exit(0);
+  // Never a good idea to use printf here...
+  printf("Caught signal #%ld\n",pthread_self());
+  // Sometimes si is not set... 
+  if (si!=NULL) printf("Caught signal(%d) via sigaction_handler() Thread #%ld\n", si->si_signo,pthread_self());
+  //IRISEND();  // Do not call IRISEND() here. It causes another SIGSEGV.  
+  pthread_exit(0);
 }
 
 #ifdef ADD_ASYNC
 void sigaction_handler_async(int sig, siginfo_t *info, void *ctx) {
+  // Never a good idea to use printf here...
   printf("Signal caught by #%ld\n",pthread_self());
   if (info!=NULL) printf("si_signo:%d si_code:%d si_pid:%d si_uid:%d\n", info->si_signo, info->si_code,(int)info->si_pid, (int)info->si_uid);
+
+  // Do not exit here because doing so will leave child processes (IRIS processes) as zombie...which is subject to be cleared by CLNDMN.
+  // Instead, set a flag to finish threads which is connected to IRIS via IRISSTART(). 
   eflag = 1;
-  // Do not exit here because doing so will leave child processes (IRIS processes) as zombie...
-  // Instead, set eflag to finish threads which is connected to IRIS via IRISSTART(). 
 }
 #endif
 

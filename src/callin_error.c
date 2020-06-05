@@ -23,7 +23,7 @@ int main(void)
 
   IRIS_ASTR pusername, ppassword, pexename;
   int	rc,timeout = 0;
-  const char *username="_SYSTEM", *password="SYS";
+  const char *username="_SYSTEM", *password="SYS",*exename="callin_error";
   int *foo = NULL;
 
 #ifdef USE_SIGNAL
@@ -54,7 +54,7 @@ int main(void)
   pusername.len = strlen(pusername.str);
   strcpy((char *) ppassword.str, password);
   ppassword.len = strlen(ppassword.str);  
-	strcpy((char *) pexename.str,"callintest");
+	strcpy((char *) pexename.str,exename);
 	pexename.len = (unsigned short)strlen((char *) pexename.str);
 
   rc=IRISSETDIR("/usr/irissys/mgr");
