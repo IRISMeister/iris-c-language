@@ -4,7 +4,7 @@ CFLAGS        = -g3 -ggdb -O3 -I /usr/irissys/dev/iris-callin/include
 LDFLAGS       = -L/usr/irissys/bin -Wl,-rpath,/usr/irissys/bin
 LIBS          = -lirisdb
 LIBSMT        = -lirisdbt
-PROGRAM       = callin_misc callin_multithreads callin_error callout.so 
+PROGRAM       = callin_misc callin_multithreads callin_signal_test callout.so 
 
 all:            $(PROGRAM)
 
@@ -14,8 +14,8 @@ callin_misc:	callin_misc.o callin_misc_calls.o callin_execute.o callin_misc_valu
 callin_multithreads:	callin_multithreads.o
 	$(CC) callin_multithreads.o $(LDFLAGS) $(LIBSMT) -pthread -o callin_multithreads
 
-callin_error:	callin_error.o
-	$(CC) callin_error.o $(LDFLAGS) $(LIBS) -o callin_error
+callin_signal_test:	callin_signal_test.o
+	$(CC) callin_signal_test.o $(LDFLAGS) $(LIBS) -o callin_signal_test
 
 callout.so:	callout.o
 	$(CC) callout.o -shared -o callout.so
