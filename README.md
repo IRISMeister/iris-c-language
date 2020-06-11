@@ -174,22 +174,23 @@ DEMO>
 "AddInt" adds given two numeric values.  
 "AddIntSave" does the same and then save it to a global. (a combination of callout and callin)  
 "CallRoutine" calls a routine which access local variable 'MYLOCALVAR' and return as a string value.
+
 ```ObjectScript
-USER>w $ZF(-3,"/home/irisowner/src/callout.so","AddInt",2,3)
+DEMO>w $ZF(-3,"/home/irisowner/src/callout.so","AddInt",2,3)
 5
-USER>w $ZF(-3,"/home/irisowner/src/callout.so","AddIntSave",3,8)
+DEMO>w $ZF(-3,"/home/irisowner/src/callout.so","AddIntSave",3,8)
 11
-USER>zw ^callout
+DEMO>zw ^callout
 ^callout(1)=11
-USER>w $ZF(-3,"/home/irisowner/src/callout.so","CallRoutine")
+DEMO>w $ZF(-3,"/home/irisowner/src/callout.so","CallRoutine")
 UNDEF
 W $ZF(-3,"home/irisowner/src/callout.so","CallRoutine")
 ^
 <FUNCTION>
-USER>s MYLOCALVAR="abcdefg" 
-USER>w $ZF(-3,"/home/irisowner/src/callout.so","CallRoutine")
+DEMO>s MYLOCALVAR="abcdefg" 
+DEMO>w $ZF(-3,"/home/irisowner/src/callout.so","CallRoutine")
 return value as STRING :abcdefg
-USER>h
+DEMO>h
 ```
 ```bash
 irisowner@ec21549f2063:~/src$ exit
