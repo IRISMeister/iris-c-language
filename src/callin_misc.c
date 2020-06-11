@@ -17,7 +17,11 @@ int main(int argc, char * argv[])
 	strcpy((char *) pexename.str,exename);
 	pexename.len = (unsigned short)strlen((char *) pexename.str);
 
+#ifdef __linux__
   rc=IRISSETDIR("/usr/irissys/mgr");
+#else
+  rc=IRISSETDIR("C:\\InterSystems\\IRIS\\mgr");
+#endif
   printf("IRISSETDIR rc:%d\n",rc);
 
   // need IRIS_PROGMODE to call callin_routine_geterrorinfo

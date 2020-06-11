@@ -266,6 +266,8 @@ int callin_globals_set_and_get()
   rc = IRISPOPSTR(&len, &val);
   printf("IRISPOPSTR rc:%d\n",rc);
   if (rc==IRIS_SUCCESS) {
+    printf("len:%d\n", len);
+    val[len] = '\0';  // is this required?
     printf("value:%s\n",val);
   }
 
@@ -287,6 +289,8 @@ int callin_globals_set_and_get()
   rc = IRISPOPSTR(&len, &val);
   printf("IRISPOPSTR rc:%d\n",rc);
   if (rc==IRIS_SUCCESS) {
+    printf("len:%d\n", len);
+    val[len] = '\0';  // is this required?
     printf("value:%s\n",val);
   }
 

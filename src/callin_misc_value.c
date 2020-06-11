@@ -36,10 +36,8 @@ int callin_value_unicode()
   rc = IRISPUSHSTRH(wcslen((const wchar_t *)data_unicode), data_unicode);
   printf("IRISPUSHSTRH rc:%d\n",rc);
 #else
-  printf("NYI\n");
-  IRISEND();
-  exit(1);
-  //rc = IRISPUSHSTRW(wcslen((const wchar_t *)wc), wc);
+  rc = IRISPUSHSTRW(wcslen((const wchar_t *)data_unicode), data_unicode);
+  printf("IRISPUSHSTRW rc:%d\n", rc);
 #endif
 
   rc=IRISGLOBALSET(numargs);
@@ -122,15 +120,14 @@ int callin_value_long_ascii()
 
   printf("wcslen %ld\n",wcslen(data_long_uni));
 
+  // max size: IRIS_MAXLOSTSZ
 #ifdef __linux__
-  c=IRISEXSTRNEWH(&longval,wcslen(data_long_uni));  // max size: IRIS_MAXLOSTSZ
+  c=IRISEXSTRNEWH(&longval,wcslen(data_long_uni));
 #else
-  printf("NYI\n");
-  IRISEND();
-  exit(1);
+  c=IRISEXSTRNEWW(&longval,wcslen(data_long_uni));
 #endif
   if (!c) {
-    printf("IRISEXSTRNEWH failed.\n");
+    printf("IRISEXSTRNEWx failed.\n");
     return -1;
   }
   wmemcpy(c,data_long_uni,wcslen(data_long_uni));
@@ -148,8 +145,8 @@ int callin_value_long_ascii()
   rc = IRISPUSHEXSTRH(&longval);
   printf("IRISPUSHEXSTRH rc:%d\n",rc);
 #else
-  printf("NYI\n");
-  return -1;
+  rc = IRISPUSHEXSTRW(&longval);
+  printf("IRISPUSHEXSTRW rc:%d\n",rc);
 #endif
   RETURNIFERROR(rc)
 
