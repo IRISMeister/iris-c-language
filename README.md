@@ -58,8 +58,8 @@ IRISPUSHGLOBAL rc:0
 IRISPUSHSTR rc:0
 IRISGLOBALGET rc:0
 IRISPOPSTR rc:0
-len:1
-value:2
+len:2
+value:bb
 ========= Calling callin_execute
 ========= Setting Unicode Value.
 locale ja_JP.UTF-8.
@@ -84,23 +84,14 @@ IRISGLOBALSET rc:0
 IRISEXSTRKILL rc:0
 Exiting.
 irisowner@ec21549f2063:~/src$
-irisowner@ec21549f2063:~/src$ iris session iris
+irisowner@ec21549f2063:~/src$ iris session iris -U demo
 ノード: ec21549f2063 インスタンス: IRIS
 ```
 ```ObjectScript
-USER>zw ^test
+DEMO>zw ^test
 ^test="06/11/2020 12:10:04;my ascii string data;100"
-^test(1)=1
-^test(2)=2
-^test(3)=3
-^test(4)=4
-^test(5)=5
-^test(6)=6
-^test(7)=7
-^test(8)=8
-^test(9)=9
-^test(10)=10
-USER>zw ^test2
+^test(1)=12345
+DEMO>zw ^test2
 ^test2(1)="abc"
 ^test2(2)="abc"
 ^test2(3)="abc"
@@ -111,20 +102,24 @@ USER>zw ^test2
 ^test2(8)="abc"
 ^test2(9)="abc"
 ^test2(10)="abc"
-USER>zw ^execute
+DEMO>zw ^calltest
+^calltest(1)="06/11/2020 17:38:49"
+^calltest(2)="06/11/2020 17:38:49;my ascii string data;100"
+^calltest(3)="06/11/2020 17:38:49;my ascii string data"
+DEMO>zw ^execute
 ^execute=1
 ^execute(1)="06/11/2020 12:10:04/566"
-USER>zw ^unicode
+DEMO>zw ^unicode
 ^unicode(1)="あいうえお"
-USER>w $L(^long(1))
+DEMO>w $L(^long(1))
 1000000
-USER>w $E(^long(1),$L(^long(1))-10,*)
+DEMO>w $E(^long(1),$L(^long(1))-10,*)
 AAAAAAAAAAA
-USER>w $L(^long(2))
+DEMO>w $L(^long(2))
 1000000
-USER>w $E(^long(2),$L(^long(2))-10,*)
+DEMO>w $E(^long(2),$L(^long(2))-10,*)
 あああああああああああ
-USER>h
+DEMO>h
 ```
 ## Multithreads test.
 You can't stop a program which was linked against IRIS multi-threads library via Ctrl-c.
