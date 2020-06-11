@@ -53,7 +53,7 @@ ClassMethod setup(ByRef tVars) As %Status
 
 	#; Initial data
 	Set $NAMESPACE="DEMO"
-	Set ^test="abc" For i=1:1:10 { Set ^test(i)=i } 
+	Set ^test="abc",^test(1)=12345
 
   	Set tSC=$$$OK
   } Catch(e) {

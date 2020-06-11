@@ -1,16 +1,18 @@
 ROUTINE TestRoutine
+	Set ^calltest=$ZDATETIME($H)
+	Quit
 Entry() public  {
-	Set ^test=$ZDATETIME($H)
+	Set ^calltest(1)=$ZDATETIME($H)
 	Quit
 }
 
 Entry2(str,int) public  {
-	Set ^test=$ZDATETIME($H)_";"_str_";"_int
+	Set ^calltest(2)=$ZDATETIME($H)_";"_str_";"_int
 	Quit 123
 }
 
 Entry3(str) public  {
-	Set ^test=$ZDATETIME($H)_";"_str
+	Set ^calltest(3)=$ZDATETIME($H)_";"_str
 	Quit "abcdefg"
 }
 

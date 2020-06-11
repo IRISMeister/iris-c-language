@@ -246,6 +246,7 @@ int callin_globals_set_and_get()
 {
   int	rc= 0;
   int len;
+  int numargs=0;
   Callin_char_t *gloref="";
   Callin_char_t *val="";
   Callin_char_t p[100];
@@ -257,7 +258,8 @@ int callin_globals_set_and_get()
   rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
   printf("IRISPUSHGLOBAL rc:%d\n",rc);
 
-  rc=IRISGLOBALGET(0, 0);  // $Get(^test)
+  numargs=0;
+  rc=IRISGLOBALGET(numargs, 0);  // $Get(^test)
   printf("IRISGLOBALGET rc:%d\n",rc);
   if (rc==IRIS_ERUNDEF) { 
     printf("UNDEF\n"); 
@@ -273,14 +275,14 @@ int callin_globals_set_and_get()
 
   /* Get value */
   gloref="test";
+  numargs=0;
   rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
   printf("IRISPUSHGLOBAL rc:%d\n",rc);
 
-  strcpy(p,"2");
-  rc = IRISPUSHSTR(strlen((const char *)p), p);
-  printf("IRISPUSHSTR rc:%d\n",rc);
+  rc = IRISPUSHINT(1); numargs++;
+  printf("IRISPUSHINT rc:%d\n",rc);
 
-  rc=IRISGLOBALGET(1, 0);  // $Get(^test(2))
+  rc=IRISGLOBALGET(numargs, 0);  // $Get(^test(1))
   printf("IRISGLOBALGET rc:%d\n",rc);
   if (rc==IRIS_ERUNDEF) { 
     printf("UNDEF\n"); 
