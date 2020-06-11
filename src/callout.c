@@ -39,8 +39,46 @@ int waitIRISEvent() {
    return 0;   /* set the exit status code */
 }
 
+/*
+* Example to access IRIS local variable(s) from within CallOut
+* Almost identical to callin_function_call2().
+*/
+int callRoutine() {
+   int   rc= 0;
+   int   rtnflags;
+   int   numargs=0;
+
+   // Set val=Entry4^TestRoutine() 
+   // Function spec
+  //    No params
+   //   Return: ascii string  
+   numargs=0;
+   rc = IRISPUSHFUNC(&rtnflags, strlen("Entry4"), "Entry4", strlen("TestRoutine"), "TestRoutine"); 
+   if (rc!=IRIS_SUCCESS) { return -1; }
+
+   rc = IRISEXTFUN(rtnflags,numargs);
+   if (rc==IRIS_ERUNDEF) { printf("UNDEF\n"); }
+   if (rc!=IRIS_SUCCESS) { return -1; }
+
+   char returnval[101];
+   IRIS_ASTR retval;
+
+   retval.len = 100;
+   rc = IRISCONVERT(IRIS_STRING,&retval);
+   if (rc!=IRIS_SUCCESS) { return -1; }
+
+   memcpy(returnval,retval.str,retval.len);
+   returnval[retval.len] = '\0';
+
+   // not a good idea to printf() here...
+   printf("return value as STRING :%s\n",returnval);
+
+   return 0;   /* set the exit status code */
+}
+
 ZFBEGIN
    ZFENTRY("AddInt","iiP",addTwoIntegers)
    ZFENTRY("AddIntSave","iiP",addTwoIntegersAndSave)
    ZFENTRY("WaitIRISEvent","",waitIRISEvent)
+   ZFENTRY("CallRoutine","",callRoutine)
 ZFEND

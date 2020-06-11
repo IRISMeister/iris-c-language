@@ -91,6 +91,7 @@ irisowner@ec21549f2063:~/src$ iris session iris -U demo
 DEMO>zw ^test
 ^test="06/11/2020 12:10:04;my ascii string data;100"
 ^test(1)=12345
+DEMO>
 DEMO>zw ^test2
 ^test2(1)="abc"
 ^test2(2)="abc"
@@ -102,21 +103,27 @@ DEMO>zw ^test2
 ^test2(8)="abc"
 ^test2(9)="abc"
 ^test2(10)="abc"
+DEMO>
 DEMO>zw ^calltest
 ^calltest(1)="06/11/2020 17:38:49"
 ^calltest(2)="06/11/2020 17:38:49;my ascii string data;100"
 ^calltest(3)="06/11/2020 17:38:49;my ascii string data"
+DEMO>
 DEMO>zw ^execute
 ^execute=1
 ^execute(1)="06/11/2020 12:10:04/566"
+DEMO>
 DEMO>zw ^unicode
 ^unicode(1)="あいうえお"
 DEMO>w $L(^long(1))
 1000000
+DEMO>
 DEMO>w $E(^long(1),$L(^long(1))-10,*)
 AAAAAAAAAAA
+DEMO>
 DEMO>w $L(^long(2))
 1000000
+DEMO>
 DEMO>w $E(^long(2),$L(^long(2))-10,*)
 あああああああああああ
 DEMO>h
@@ -150,22 +157,23 @@ Thread(0) #140432100972288 exiting
 Join th2
 All threads have exited - done
 irisowner@ec21549f2063:~/src$
-irisowner@ec21549f2063:~/src$ iris session iris
+irisowner@ec21549f2063:~/src$ iris session iris -U demo
 
 ノード: ec21549f2063 インスタンス: IRIS
 ```
 ```ObjectScript
-USER>zw ^callinMT
+DEMO>zw ^callinMT
 ^callinMT=4
 ^callinMT(1)="threadId:140432100972288 @ 2020/06/04 Thu 17:20:35"
 ^callinMT(2)="threadId:140432084186880 @ 2020/06/04 Thu 17:20:36"
 ^callinMT(3)="threadId:140432092579584 @ 2020/06/04 Thu 17:20:37"
 ^callinMT(4)="threadId:140432100972288 @ 2020/06/04 Thu 17:20:40"
-USER>
+DEMO>
 ```
 ## CallOut tests.  
-"AddInt" add given two numeric values.  
-"AddIntSave" does the same and then save it as a global. (a combination of callout and callin)
+"AddInt" adds given two numeric values.  
+"AddIntSave" does the same and then save it to a global. (a combination of callout and callin)  
+"CallRoutine" calls a routine which access local variable 'MYLOCALVAR' and return as a string value.
 ```ObjectScript
 USER>w $ZF(-3,"/home/irisowner/src/callout.so","AddInt",2,3)
 5
@@ -173,6 +181,14 @@ USER>w $ZF(-3,"/home/irisowner/src/callout.so","AddIntSave",3,8)
 11
 USER>zw ^callout
 ^callout(1)=11
+USER>w $ZF(-3,"/home/irisowner/src/callout.so","CallRoutine")
+UNDEF
+W $ZF(-3,"home/irisowner/src/callout.so","CallRoutine")
+^
+<FUNCTION>
+USER>s MYLOCALVAR="abcdefg" 
+USER>w $ZF(-3,"/home/irisowner/src/callout.so","CallRoutine")
+return value as STRING :abcdefg
 USER>h
 ```
 ```bash

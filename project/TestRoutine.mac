@@ -16,6 +16,10 @@ Entry3(str) public  {
 	Quit "abcdefg"
 }
 
+Entry4() [MYLOCALVAR] public {
+	Quit MYLOCALVAR
+}
+
 ErrorEntry() public  {
 	Set a=1/0
 	Quit
