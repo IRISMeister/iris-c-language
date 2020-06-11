@@ -17,13 +17,14 @@ RUN echo 'export LANG=ja_JP.UTF-8' >> ~/.bashrc && echo 'export LANGUAGE="ja_JP:
  && mkdir src iris
 
 COPY src/ /home/irisowner/src/
-COPY iris/ /home/irisowner/iris/
+COPY project/ /home/irisowner/iris/
 
 RUN cd src && make clean && make
 
 RUN iris start $ISC_PACKAGE_INSTANCENAME quietly \ 
- && printf 'Do ##class(Config.NLS.Locales).Install("jpuw") Do ##class(Security.Users).UnExpireUserPasswords("*") Set p("Enabled")=1 Do ##class(Security.Services).Modify("%%Service_CallIn", .p) h\n' | iris session $ISC_PACKAGE_INSTANCENAME -U %SYS \
- && printf 'Do $SYSTEM.OBJ.ImportDir("/home/irisowner/iris",,"ck",,1) Set ^test="abc" For i=1:1:10 { Set ^test(i)=i } h\n' | iris session $ISC_PACKAGE_INSTANCENAME \
+ && printf 'Do ##class(Config.NLS.Locales).Install("jpuw") h\n' | iris session $ISC_PACKAGE_INSTANCENAME -U %SYS \
+ && printf 'Set tSC=$system.OBJ.Load("'$HOME'/iris/MyInstallerPackage/Installer.cls","ck") Do:+tSC=0 $SYSTEM.Process.Terminate($JOB,1) h\n' | iris session $ISC_PACKAGE_INSTANCENAME \
+ && printf 'Set tSC=##class(MyInstallerPackage.Installer).setup() Do:+tSC=0 $SYSTEM.Process.Terminate($JOB,1) h\n' | iris session $ISC_PACKAGE_INSTANCENAME \
  && iris stop $ISC_PACKAGE_INSTANCENAME quietly
 
 # Cleaning up
