@@ -2,6 +2,8 @@ The simpest example of how to build/use IRIS Callin and Callout in Linux.
 Callin (callin) will get value from ^test global and set ^test2(1) to ^test2(10) global nodes.  
 Multi-thread Callin (callint) will set ^CallinTest global nodes from within each thread.  
 Callout (callout.so) will add two given integers and returns it.  
+
+see https://docs.intersystems.com/iris20191j/csp/docbook/Doc.View.cls?KEY=BXCI
 # How to RUN
 
 ## Start IRIS.
@@ -10,41 +12,94 @@ user@host:~/iris-c-language$ docker-compose up -d
 user@host:~/iris-c-language$ docker-compose exec iris bash
 irisowner@ec21549f2063:~$
 ```
-## Various tests.
+## Various functions and various data (Unicode, Long Ascii String, Long Unicode String) handling.
 ```bash
 irisowner@ec21549f2063:~$ cd src
-irisowner@ec21549f2063:~/src$ ./callin_misc
-rc:0
-IrisSecureStartA Status :Success. 0
-=== Calling callin_routine_call
+irisowner@c91e96487245:~/src$ ./callin_misc
+IRISSETDIR rc:0
+IRISSECURESTART Status :Success. 0
+========= Calling callin_routine_call
 IRISPUSHRTN rc:0
-IRISDORTN rc:17
-=== Calling callin_function_call1
+IRISDORTN rc:0
+========= Calling callin_function_call1
 IRISPUSHRTN rc:0
 IRISPUSHINT rc:0
-IRISEXTFUN rc:17
-=== Calling callin_function_call2
+IRISEXTFUN rc:0
+IRISCONVERT rc:0
+return value as INT4 :123
+========= Calling callin_function_call2
 IRISPUSHRTN rc:0
-IRISEXTFUN rc:17
-=== Calling callin_classmethod_call1
+IRISEXTFUN rc:0
+IRISCONVERT rc:0
+return value as STRING :abcdefg
+========= Calling callin_routine_geterrorinfo
+IRISPUSHRTN rc:0
+IRISDORTN rc:18
+IRISERRXLATE [<DIVIDE>]
+IRISERROR [<DIVIDE>ErrorEntry+1^TestRoutine]
+IRISERROR [     Set a=1/0]
+IRISERROR [1]
+========= Calling callin_classmethod_call1
 IRISPUSHCLASSMETHOD rc:0
-IRISINVOKECLASSMETHOD rc:122
-=== Calling callin_globals_set_and_get
-IrisPushGlobal rc:0
-IrisGlobalGet rc:0
-IrisPopStr rc:0
-value:abc
-IrisPushGlobal rc:0
-IrisPushStr rc:0
-IrisGlobalGet rc:0
-IrisPopStr rc:0
+IRISINVOKECLASSMETHOD rc:0
+========= Calling callin_classmethod_call2
+IRISPUSHCLASSMETHOD rc:0
+IRISPUSHINT rc:0
+IRISINVOKECLASSMETHOD rc:0
+IRISCONVERT rc:0
+return value as INT4 :456
+========= Calling callin_globals_set_and_get
+IRISPUSHGLOBAL rc:0
+IRISGLOBALGET rc:0
+IRISPOPSTR rc:0
+len:44
+value:06/11/2020 12:10:04;my ascii string data;100
+IRISPUSHGLOBAL rc:0
+IRISPUSHSTR rc:0
+IRISGLOBALGET rc:0
+IRISPOPSTR rc:0
+len:1
 value:2
+========= Calling callin_execute
+========= Setting Unicode Value.
+locale ja_JP.UTF-8.
+IRISPUSHGLOBAL rc:0
+IRISPUSHINT rc:0
+Pushing ... value:あいうえお length:5  size of one letter:4
+IRISPUSHSTRH rc:0
+IRISGLOBALSET rc:0
+========= Setting long ascii String.
+strlen 1000000
+IRISPUSHGLOBAL rc:0
+IRISPUSHINT rc:0
+IRISPUSHEXSTR rc:0
+IRISGLOBALSET rc:0
+IRISEXSTRKILL rc:0
+========= Setting long Unicode String.
+wcslen 1000000
+IRISPUSHGLOBAL rc:0
+IRISPUSHINT rc:0
+IRISPUSHEXSTRH rc:0
+IRISGLOBALSET rc:0
+IRISEXSTRKILL rc:0
 Exiting.
 irisowner@ec21549f2063:~/src$
 irisowner@ec21549f2063:~/src$ iris session iris
 ノード: ec21549f2063 インスタンス: IRIS
 ```
 ```ObjectScript
+USER>zw ^test
+^test="06/11/2020 12:10:04;my ascii string data;100"
+^test(1)=1
+^test(2)=2
+^test(3)=3
+^test(4)=4
+^test(5)=5
+^test(6)=6
+^test(7)=7
+^test(8)=8
+^test(9)=9
+^test(10)=10
 USER>zw ^test2
 ^test2(1)="abc"
 ^test2(2)="abc"
@@ -56,6 +111,19 @@ USER>zw ^test2
 ^test2(8)="abc"
 ^test2(9)="abc"
 ^test2(10)="abc"
+USER>zw ^execute
+^execute=1
+^execute(1)="06/11/2020 12:10:04/566"
+USER>zw ^unicode
+^unicode(1)="あいうえお"
+USER>w $L(^long(1))
+1000000
+USER>w $E(^long(1),$L(^long(1))-10,*)
+AAAAAAAAAAA
+USER>w $L(^long(2))
+1000000
+USER>w $E(^long(2),$L(^long(2))-10,*)
+あああああああああああ
 USER>h
 ```
 ## Multithreads test.
@@ -99,49 +167,6 @@ USER>zw ^callinMT
 ^callinMT(3)="threadId:140432092579584 @ 2020/06/04 Thu 17:20:37"
 ^callinMT(4)="threadId:140432100972288 @ 2020/06/04 Thu 17:20:40"
 USER>
-```
-## Various data (Unicode, Long Ascii String, Long Unicode String) tests.
-```bash
-irisowner@ec21549f2063:~/src$ ./callin_misc_value_test
-locale ja_JP.UTF-8.
-IRISSETDIR rc:0
-IrisSecureStartA Status :0
-========= Setting Unicode Value.
-IRISPUSHGLOBAL rc:0
-IRISPUSHINT rc:0
-Pushing ... value:あいうえお length:5  size of one letter:4
-IRISPUSHSTRH rc:0
-IRISGLOBALSET rc:0
-========= Setting long ascii String.
-strlen 1000000
-IRISPUSHGLOBAL rc:0
-IRISPUSHINT rc:0
-IRISPUSHEXSTR rc:0
-IRISGLOBALSET rc:0
-IRISEXSTRKILL rc:0
-========= Setting long Unicode String.
-wcslen 1000000
-IRISPUSHGLOBAL rc:0
-IRISPUSHINT rc:0
-IRISPUSHEXSTRH rc:0
-IRISGLOBALSET rc:0
-IRISEXSTRKILL rc:0
-Exiting.
-irisowner@ec21549f2063:~/src$ iris session iris
-ノード: ec21549f2063 インスタンス: IRIS
-```
-```ObjectScript
-USER>zw ^unicode
-^unicode(1)="あいうえお"
-USER>w $L(^long(1))
-1000000
-USER>w $E(^long(1),$L(^long(1))-10,*)
-AAAAAAAAAAA
-USER>w $L(^long(2))
-1000000
-USER>w $E(^long(2),$L(^long(2))-10,*)
-あああああああああああ
-USER>h
 ```
 ## CallOut tests.  
 "AddInt" add given two numeric values.  
