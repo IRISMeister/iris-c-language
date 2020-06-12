@@ -6,6 +6,10 @@
 
 int main(int argc, char * argv[])
 {
+
+  // need IRIS_PROGMODE to call callin_routine_geterrorinfo() without being disconnected
+  int termflag = IRIS_PROGMODE|IRIS_TTNONE|IRIS_TTNEVER;
+  //int termflag = IRIS_TTNONE|IRIS_TTNEVER;
   IRIS_ASTR pusername, ppassword, pexename;
   int	rc,timeout = 0;
   const char *username="_SYSTEM", *password="SYS",*exename="callin_misc";
@@ -24,8 +28,7 @@ int main(int argc, char * argv[])
 #endif
   printf("IRISSETDIR rc:%d\n",rc);
 
-  // need IRIS_PROGMODE to call callin_routine_geterrorinfo
-  rc = IRISSECURESTART(&pusername, &ppassword, &pexename, IRIS_PROGMODE|IRIS_TTNONE|IRIS_TTNEVER, timeout, NULL, NULL);
+  rc = IRISSECURESTART(&pusername, &ppassword, &pexename, termflag, timeout, NULL, NULL);
   char* sMes;
   switch (rc)
   {

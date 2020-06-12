@@ -11,3 +11,4 @@ src/sap1238
 src/sampcallin.c
 src/sampcallint.c
 src/Makefile.cache
+%ZSTART.mac
