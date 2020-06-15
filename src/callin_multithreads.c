@@ -360,12 +360,16 @@ BOOL WINAPI ctrl_handler(DWORD fdwCtrlType)
 {
 	switch (fdwCtrlType)
 	{
-		// Handle the CTRL-C signal. 
+		// Handle signals. 
 	case CTRL_C_EVENT:
 		printf("Ctrl-C event caught by %d\n\n",THREADID);
+  case CTRL_CLOSE_EVENT:
+  case CTRL_BREAK_EVENT:
+  case CTRL_LOGOFF_EVENT:  // is this OK?
 		eflag = 1;
 		return TRUE;
 
+  case CTRL_SHUTDOWN_EVENT:
 	default:
 		return FALSE;
 	}
