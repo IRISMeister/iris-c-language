@@ -1,10 +1,10 @@
 OUTDIR=.\x64
-LINK32=link.exe
+LINK=link.exe
 
 ALL : $(OUTDIR)\callin_multithreads.exe $(OUTDIR)\callin_misc.exe
 
 CLEAN :
-        -@erase /Q $(OUTDIR)\*
+        -@erase /Q $(OUTDIR)\*.exe,$(OUTDIR)\*.obj.,$(OUTDIR)\*.pdb,,$(OUTDIR)\*.ilk
 
 CPPFLAGS=\
         /source-charset:utf-8\
@@ -20,7 +20,7 @@ CPPFLAGS=\
         /D_UNICODE\
         /I"..\\" /I"C:\InterSystems\IRIS\dev\iris-callin\include" 
 
-LINK32_FLAGS=\
+LINK_FLAGS=\
         /nologo\
         /subsystem:console\
         /DEBUG:FULL /MACHINE:X64\
@@ -34,10 +34,10 @@ MISC_OBJS=\
         $(OUTDIR)\callin_execute.obj $(OUTDIR)\callin_misc.obj $(OUTDIR)\callin_misc_calls.obj $(OUTDIR)\callin_misc_value.obj
 
 $(OUTDIR)\callin_multithreads.exe : $(MT_OBJS)
-        $(LINK32) $(LINK32_FLAGS) /pdb:$(OUTDIR)\callin_multithreads.pdb /out:$(OUTDIR)\callin_multithreads.exe $(MT_OBJS)
+        $(LINK) $(LINK_FLAGS) /pdb:$(OUTDIR)\callin_multithreads.pdb /out:$(OUTDIR)\callin_multithreads.exe $(MT_OBJS)
 
 $(OUTDIR)\callin_misc.exe : $(MISC_OBJS)
-        $(LINK32) $(LINK32_FLAGS) /pdb:$(OUTDIR)\callin_misc.pdb /out:$(OUTDIR)\callin_misc.exe $(MISC_OBJS)
+        $(LINK) $(LINK_FLAGS) /pdb:$(OUTDIR)\callin_misc.pdb /out:$(OUTDIR)\callin_misc.exe $(MISC_OBJS)
 
 .c{$(OUTDIR)}.obj:
         $(CPP) $(CPPFLAGS) $<
