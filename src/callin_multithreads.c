@@ -15,19 +15,19 @@
 #include <signal.h>
 #include "iris-callin.h"
 
-#define ADD_ASYNC        // add async signal handler
-#define ADD_NON_IRIS     // add a thread which doesn't connect to IRIS
+#define ADD_ASYNC_HANDLER       // add async signal handler
+#define ADD_NON_IRIS            // add a thread which doesn't connect to IRIS
 
 #ifdef __linux__
 #define THREADID pthread_self()
 void sigaction_handler();       // signal handler for synchronous signals
-#ifdef ADD_ASYNC
+#ifdef ADD_ASYNC_HANDLER
 void sigaction_handler_async(); // signal handler for asynchronous signals
 #endif
 #else
 #define THREADID GetCurrentThreadId()
 int exception_filter(unsigned int code, struct _EXCEPTION_POINTERS *ep);
-#ifdef ADD_ASYNC
+#ifdef ADD_ASYNC_HANDLER
 BOOL WINAPI ctrl_handler(DWORD);
 #endif
 #endif
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
   sigaction(SIGSEGV, &sa, NULL);
 
   // signal handler for Asynchronous signals, such as SIGINT
-#ifdef ADD_ASYNC
+#ifdef ADD_ASYNC_HANDLER
   struct sigaction sa_asyncsig;
   memset(&sa_asyncsig, 0, sizeof(sa_asyncsig));
   sa_asyncsig.sa_sigaction = sigaction_handler_async;
@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
 	
   printf("Starting main process. #%ld\n",THREADID);
 
-#ifdef ADD_ASYNC
+#ifdef ADD_ASYNC_HANDLER
   // control handler for signals
   if (SetConsoleCtrlHandler(ctrl_handler, TRUE)) {
 	printf("SetConsoleCtrlHandler in place.\n");
@@ -339,7 +339,7 @@ int exception_filter(unsigned int code, struct _EXCEPTION_POINTERS *ep)
 }
 #endif
 
-#ifdef ADD_ASYNC
+#ifdef ADD_ASYNC_HANDLER
 #ifdef __linux__
 void sigaction_handler_async(int sig, siginfo_t *info, void *ctx) {
   // Never a good idea to use printf here...printf() is not async-signal-safe functions!!!
