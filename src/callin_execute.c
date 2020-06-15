@@ -1,3 +1,4 @@
+#pragma warning(disable : 4996)
 #include "iris-callin.h"
 #include "mycallin.h"
 #include <stdlib.h>
