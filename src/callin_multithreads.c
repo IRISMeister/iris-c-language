@@ -303,8 +303,11 @@ int runtest(int p) {
 
 	  int numargs=0;
 	  rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
+    RETURNIFERROR(rc);
 	  rc = IRISPUSHINT(newId); numargs++;
+    RETURNIFERROR(rc);
 	  rc = IRISPUSHSTR(strlen(data),data);
+    RETURNIFERROR(rc);
 	  rc = IRISGLOBALSET(numargs);
     RETURNIFERROR(rc);
 
