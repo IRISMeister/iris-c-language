@@ -1,10 +1,7 @@
 /*
-  https://docs.intersystems.com/irislatest/csp/docbook/Doc.View.cls?KEY=BXCI_callin#BXCI_callin_multithreading_signals
-*/
-#if	defined(_MSC_VER) && _MSC_VER >= 1400
-#define	_CRT_SECURE_NO_DEPRECATE
-#endif
-
+ *  https://docs.intersystems.com/irislatestj/csp/docbook/Doc.View.cls?KEY=BXCI_callin#BXCI_callin_multithreading_signals
+ */
+#pragma warning(disable : 4996)
 #ifdef __linux__
 #include <pthread.h>
 #include <unistd.h>
@@ -23,9 +20,9 @@
 
 #ifdef __linux__
 #define THREADID pthread_self()
-void sigaction_handler();
+void sigaction_handler();       // signal handler for synchronous signals
 #ifdef ADD_ASYNC
-void sigaction_handler_async();     // signal handler for Asynchronous signals
+void sigaction_handler_async(); // signal handler for asynchronous signals
 #endif
 #else
 #define THREADID GetCurrentThreadId()
@@ -35,8 +32,8 @@ BOOL WINAPI ctrl_handler(DWORD);
 #endif
 #endif
 
-void *thread_main(void *);          // threads which connect to IRIS
-int	runtest();
+void *thread_main(void *);      // threads which connect to IRIS
+int	runtest();                  // main logic 
 
 #ifdef ADD_NON_IRIS
 void *thread_noiris_main(void *);   // a thread for non IRIS
@@ -48,8 +45,8 @@ volatile sig_atomic_t eflag = 0;    // flag to end the loop
 /*
   This is a sample of how to utilize the call-in interface in a multi-threaded environment.
   It starts multiple threads, and within each thread calls IRISStart to create a connection.
-  The thread then performs one action via IrisExecute().  The thread then calls IRISEnd()
-  and exits.
+  The thread then loops and keeps issuing IrisPushGlobal() until user interrupt it by Ctrl-c.  
+  The thread then exits from the loop and calls IRISEnd() and exits.
   When all the threads have exited, the main thread exits.
 */
 #ifdef __linux__
@@ -280,7 +277,7 @@ int runtest(int p) {
 #ifdef __linux__
     sleep(rand()%5+5);
 #else
-	Sleep(((rand() % 5) + 5) * 1000);
+	  Sleep(((rand() % 5) + 5) * 1000);
 #endif
 
     // Get new sequence value.  Equivalent of Set newId=$INCREMENT(^callinMT)
@@ -300,14 +297,14 @@ int runtest(int p) {
     sprintf(data,"threadId:%ld @ ",THREADID);
     strcat(data,date);
 
-	int numargs=0;
-	rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
-	rc = IRISPUSHINT(newId); numargs++;
-	rc = IRISPUSHSTR(strlen(data),data);
-	rc = IRISGLOBALSET(numargs);
-	if (rc) {
-		return -1;
-	}
+	  int numargs=0;
+	  rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
+	  rc = IRISPUSHINT(newId); numargs++;
+	  rc = IRISPUSHSTR(strlen(data),data);
+	  rc = IRISGLOBALSET(numargs);
+	  if (rc) {
+		  return -1;
+	  }
 
   }
   printf("Thread(%d) #%ld has completed test\n",p,THREADID);
@@ -345,7 +342,7 @@ int exception_filter(unsigned int code, struct _EXCEPTION_POINTERS *ep)
 #ifdef ADD_ASYNC
 #ifdef __linux__
 void sigaction_handler_async(int sig, siginfo_t *info, void *ctx) {
-  // Never a good idea to use printf here...
+  // Never a good idea to use printf here...printf() is not async-signal-safe functions!!!
   printf("Signal caught by #%ld\n",THREADID);
   if (info!=NULL) printf("si_signo:%d si_code:%d si_pid:%d si_uid:%d\n", info->si_signo, info->si_code,(int)info->si_pid, (int)info->si_uid);
   // Do not exit here because doing so will leave child processes (IRIS processes) as zombie...which is subject to be cleared by CLNDMN.
