@@ -1,4 +1,4 @@
-#include "iris-callin.h"
+﻿#include "iris-callin.h"
 #include "mycallin.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -131,7 +131,7 @@ int callin_value_long_ascii()
     return -1;
   }
   wmemcpy(c,data_long_uni,wcslen(data_long_uni));
-  longval.len=wcslen(data_long_uni);
+  longval.len=(unsigned short)wcslen(data_long_uni);
 
   rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
   printf("IRISPUSHGLOBAL rc:%d\n",rc);
