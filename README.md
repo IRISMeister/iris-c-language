@@ -7,11 +7,23 @@ see https://docs.intersystems.com/iris20191j/csp/docbook/Doc.View.cls?KEY=BXCI
 # How to RUN
 
 ## Start IRIS.
+### On Docker(Ubuntu)
 ```bash
+user@host:~/$ git clone https://github.com/IRISMeister/iris-c-language.git
+user@host:~/$ cd iris-c-language
 user@host:~/iris-c-language$ docker-compose up -d
 user@host:~/iris-c-language$ docker-compose exec iris bash
 irisowner@ec21549f2063:~$
 ```
+### On Windows
+If you want to build these examples on Windows, do this from VS 2017 x64 Native Tools command prompt.  Images will be created in x64\ folder.
+```bat
+c:\Program Files (x86)\Microsoft Visual Studio\2017\Professional>cd \temp
+C:\temp>git clone https://github.com/IRISMeister/iris-c-language.git
+C:\temp>cd iris-c-language\src
+C:\temp\iris-c-language\src>nmake -f makefile.mak
+```
+
 ## Various functions and various data (Unicode, Long Ascii String, Long Unicode String) handling.
 ```bash
 irisowner@ec21549f2063:~$ cd src
