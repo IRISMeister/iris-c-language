@@ -6,10 +6,6 @@ ALL : $(OUTDIR)\callin_multithreads.exe $(OUTDIR)\callin_misc.exe
 CLEAN :
         -@erase /Q $(OUTDIR)\*
 
-$(OUTDIR) :
-        @if not exist $(OUTDIR) mkdir $(OUTDIR)
-
-
 CPPFLAGS=\
         /source-charset:utf-8\
         /nologo\
