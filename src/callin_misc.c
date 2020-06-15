@@ -1,6 +1,7 @@
 #pragma warning(disable : 4996)
 #include "iris-callin.h"
 #include "mycallin.h"
+#include "callin_funcs.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include "iris-callin.h"
+#include "mycallin.h"
 
 #define ADD_SYNC_HANDLER        // add sync signal handler
 #define ADD_ASYNC_HANDLER       // add async signal handler
@@ -281,9 +282,13 @@ int runtest(int p) {
 
     // Get new sequence value.  Equivalent of Set newId=$INCREMENT(^callinMT)
     rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
+    RETURNIFERROR(rc);
     rc = IRISPUSHINT(1); // Increment by 1
+    RETURNIFERROR(rc);
     rc = IRISGLOBALINCREMENT(0);
+    RETURNIFERROR(rc);
     rc = IRISPOPINT(&newId);
+    RETURNIFERROR(rc);
 
     // Set ^callinMT(newId)="threadId:"_THREADID_" @ "_timestamp
     t=time(NULL);
@@ -301,9 +306,7 @@ int runtest(int p) {
 	  rc = IRISPUSHINT(newId); numargs++;
 	  rc = IRISPUSHSTR(strlen(data),data);
 	  rc = IRISGLOBALSET(numargs);
-	  if (rc) {
-		  return -1;
-	  }
+    RETURNIFERROR(rc);
 
   }
   printf("Thread(%d) #%ld has completed test\n",p,THREADID);
