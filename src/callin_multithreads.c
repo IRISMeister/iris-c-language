@@ -125,13 +125,13 @@ int main(int argc, char* argv[])
   HANDLE	th;
   DWORD	exit_code;
   int targ[NUMTHREADS];
-	
+  
   printf("Starting main process. #%ld\n",THREADID);
 
 #ifdef ADD_ASYNC_HANDLER
   // control handler for an asynchronous signal, such as CTRL_C_EVENT
   if (SetConsoleCtrlHandler(ctrl_handler, TRUE)) {
-	printf("SetConsoleCtrlHandler in place.\n");
+  printf("SetConsoleCtrlHandler in place.\n");
   }
 #endif
 
@@ -149,43 +149,43 @@ int main(int argc, char* argv[])
   printf("IRISSETDIR rc:%d\n",rc);
 
   for (i=0; i < numthreads; i++) {
-	targ[i]=i;
-  	th = CreateThread(NULL,
-			      0,
-			      (LPTHREAD_START_ROUTINE)thread_main,
-			      &targ[i],
-			      0,
-			      NULL);
-	   if (!th) {
-	      rc = GetLastError();
-	      printf("Failed to start thread #%d, error = %d\n",i,rc);
-	   } else {
-	      threadlist[threadcnt++] = th;
-  	}
+  targ[i]=i;
+    th = CreateThread(NULL,
+            0,
+            (LPTHREAD_START_ROUTINE)thread_main,
+            &targ[i],
+            0,
+            NULL);
+     if (!th) {
+        rc = GetLastError();
+        printf("Failed to start thread #%d, error = %d\n",i,rc);
+     } else {
+        threadlist[threadcnt++] = th;
+    }
   }
   printf("Waiting for threads to exit...\n");
 
   /* Wait for the threads to exit */
   while (threadcnt) {
-	   rc = WaitForMultipleObjectsEx(threadcnt,threadlist,0,INFINITE,1);
-	   if ((rc == WAIT_OBJECT_0) ||
-	       ((rc > WAIT_OBJECT_0) && ((unsigned int)rc < (WAIT_OBJECT_0 + threadcnt)))) {
-	      rc -= WAIT_OBJECT_0;
-	      if (GetExitCodeThread(threadlist[rc],&exit_code)) {
-		 if (exit_code != STILL_ACTIVE) {
-		    if (--threadcnt) {
-		       /* Fill dead thread's slot with the last thread
-		          in the list and drop the last thread from
-		          threadcnt */
-		       threadlist[rc] = threadlist[threadcnt];
-		    }
-		 }
-	      }
-	   } else if (rc == -1) {
-	   /* some kind of error */
-	      rc = GetLastError();
-	      printf("Unexpected error: %d\n",rc);
-	   }
+     rc = WaitForMultipleObjectsEx(threadcnt,threadlist,0,INFINITE,1);
+     if ((rc == WAIT_OBJECT_0) ||
+         ((rc > WAIT_OBJECT_0) && ((unsigned int)rc < (WAIT_OBJECT_0 + threadcnt)))) {
+        rc -= WAIT_OBJECT_0;
+        if (GetExitCodeThread(threadlist[rc],&exit_code)) {
+     if (exit_code != STILL_ACTIVE) {
+        if (--threadcnt) {
+           /* Fill dead thread's slot with the last thread
+              in the list and drop the last thread from
+              threadcnt */
+           threadlist[rc] = threadlist[threadcnt];
+        }
+     }
+        }
+     } else if (rc == -1) {
+     /* some kind of error */
+        rc = GetLastError();
+        printf("Unexpected error: %d\n",rc);
+     }
   }
 #ifdef ADD_NON_IRIS
   printf("waiting NON_IRIS thread\n");
@@ -226,23 +226,23 @@ void *thread_main(void *tparam) {
   pexename.len = (unsigned short)strlen((char *) pexename.str);
   
   printf("Thread(%d) #%ld starting authentication in IRIS'\n",*p,THREADID);
-	/* Authenticate using username/pw user. */
+  /* Authenticate using username/pw user. */
 
 #ifndef __linux__
   // To trap hardware exceptions on Windows
   // https://docs.microsoft.com/ja-jp/cpp/cpp/hardware-exceptions?view=vs-2019
   __try {
 #endif
-	rc = IRISSECURESTART(&pusername,&ppassword,&pexename,termflag, timeout, NULL, NULL);
-	if (rc) {
-	  printf("Thread(%d) #%ld : IRISSecureStart returned %d\n",*p,THREADID, rc);
-	  IRISEND();
-	  return NULL;
-	}
+  rc = IRISSECURESTART(&pusername,&ppassword,&pexename,termflag, timeout, NULL, NULL);
+  if (rc) {
+    printf("Thread(%d) #%ld : IRISSecureStart returned %d\n",*p,THREADID, rc);
+    IRISEND();
+    return NULL;
+  }
 
-	//if (*p == 0) { *foo = 1; }  // comment out to throw SIGSEGV
+  //if (*p == 0) { *foo = 1; }  // comment out to throw SIGSEGV
 
-	runtest(*p);
+  runtest(*p);
 #ifndef __linux__
   }
   __except (exception_filter(GetExceptionCode(), GetExceptionInformation())) {}
@@ -273,11 +273,11 @@ int runtest(int p) {
 
   while ( !eflag ) {
 
-	// Do some dummy work
+  // Do some dummy work
 #ifdef __linux__
     sleep(rand()%5+5);
 #else
-	  Sleep(((rand() % 5) + 5) * 1000);
+    Sleep(((rand() % 5) + 5) * 1000);
 #endif
 
     // Get new sequence value.  Equivalent of Set newId=$INCREMENT(^callinMT)
@@ -301,14 +301,14 @@ int runtest(int p) {
     sprintf(data,"threadId:%ld @ ",THREADID);
     strcat(data,date);
 
-	  int numargs=0;
-	  rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
+    int numargs=0;
+    rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
     RETURNIFERROR(rc);
-	  rc = IRISPUSHINT(newId); numargs++;
+    rc = IRISPUSHINT(newId); numargs++;
     RETURNIFERROR(rc);
-	  rc = IRISPUSHSTR(strlen(data),data);
+    rc = IRISPUSHSTR(strlen(data),data);
     RETURNIFERROR(rc);
-	  rc = IRISGLOBALSET(numargs);
+    rc = IRISGLOBALSET(numargs);
     RETURNIFERROR(rc);
 
   }
@@ -338,8 +338,8 @@ int exception_filter(unsigned int code, struct _EXCEPTION_POINTERS *ep)
 {
   if (code == EXCEPTION_ACCESS_VIOLATION)
   {
-	printf("caught ACCESS_VIOLATION. in #%d\n",THREADID);
-	return EXCEPTION_EXECUTE_HANDLER;
+  printf("caught ACCESS_VIOLATION. in #%d\n",THREADID);
+  return EXCEPTION_EXECUTE_HANDLER;
   }
   return EXCEPTION_CONTINUE_SEARCH;
 }
@@ -358,21 +358,21 @@ void sigaction_handler_async(int sig, siginfo_t *info, void *ctx) {
 // https://docs.microsoft.com/en-us/windows/console/registering-a-control-handler-function
 BOOL WINAPI ctrl_handler(DWORD fdwCtrlType)
 {
-	switch (fdwCtrlType)
-	{
-		// Handle signals. 
-	case CTRL_C_EVENT:
-		printf("Ctrl-C event caught by %d\n\n",THREADID);
+  switch (fdwCtrlType)
+  {
+  // Handle signals. 
+  case CTRL_C_EVENT:
+  printf("Ctrl-C event caught by %d\n\n",THREADID);
   case CTRL_CLOSE_EVENT:
   case CTRL_BREAK_EVENT:
   case CTRL_LOGOFF_EVENT:  // is this OK?
-		eflag = 1;
-		return TRUE;
+    eflag = 1;
+    return TRUE;
 
   case CTRL_SHUTDOWN_EVENT:
-	default:
-		return FALSE;
-	}
+  default:
+    return FALSE;
+  }
 }
 
 #endif
