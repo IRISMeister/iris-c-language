@@ -1,3 +1,4 @@
+#pragma warning(disable : 4996)
 #include "iris-callin.h"
 #include "mycallin.h"
 #include <stdlib.h>
@@ -15,11 +16,11 @@ int main(int argc, char * argv[])
   const char *username="_SYSTEM", *password="SYS",*exename="callin_misc";
 
   strcpy((char *) pusername.str, username);
-  pusername.len = strlen(pusername.str);
+  pusername.len = (unsigned short)strlen(pusername.str);
   strcpy((char *) ppassword.str, password);
-  ppassword.len = strlen(ppassword.str);  
-	strcpy((char *) pexename.str,exename);
-	pexename.len = (unsigned short)strlen((char *) pexename.str);
+  ppassword.len = (unsigned short)strlen(ppassword.str);
+  strcpy((char *) pexename.str,exename);
+  pexename.len = (unsigned short)strlen((char *) pexename.str);
 
 #ifdef __linux__
   rc=IRISSETDIR("/usr/irissys/mgr");

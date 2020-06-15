@@ -29,7 +29,7 @@ int callin_value_unicode()
   printf("IRISPUSHINT rc:%d\n",rc);
 
   wchar_t data_unicode[] = L"あいうえお";
-  printf("Pushing ... value:%ls length:%lu  size of one letter:%lu\n", data_unicode, wcslen(data_unicode), sizeof(data_unicode[0]));
+  printf("Pushing ... value:%ls length:%zu  size of one letter:%zu\n", data_unicode, wcslen(data_unicode), sizeof(data_unicode[0]));
 
   // linux wchar_t is 4 bytes, whilst windows' is 2 bytes....
 #ifdef __linux__
@@ -67,14 +67,14 @@ int callin_value_long_ascii()
   memset(data_ascii_long, 'A', ASCII_LONG_DATA_SIZE);
   data_ascii_long[ASCII_LONG_DATA_SIZE]='\0';
 
-  printf("strlen %ld\n",strlen(data_ascii_long));
+  printf("strlen %zd\n",strlen(data_ascii_long));
   c=IRISEXSTRNEW(&longval,strlen(data_ascii_long));  // size up to IRIS_MAXLOSTSZ
   if (!c) {
     printf("IRISEXSTRNEWH failed.\n");
     return -1;
   }
   memcpy(c,data_ascii_long,strlen(data_ascii_long));
-  longval.len=strlen(data_ascii_long);
+  longval.len=(unsigned short)strlen(data_ascii_long);
 
   rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
   printf("IRISPUSHGLOBAL rc:%d\n",rc);
@@ -118,7 +118,7 @@ int callin_value_long_ascii()
   wmemset(data_long_uni, L'あ', UNICODE_LONG_DATA_SIZE);
   data_long_uni[UNICODE_LONG_DATA_SIZE]=0;
 
-  printf("wcslen %ld\n",wcslen(data_long_uni));
+  printf("wcslen %zd\n",wcslen(data_long_uni));
 
   // max size: IRIS_MAXLOSTSZ
 #ifdef __linux__

@@ -1,3 +1,4 @@
+#pragma warning(disable : 4996)
 #include "iris-callin.h"
 #include "mycallin.h"
 #include <stdlib.h>
@@ -33,8 +34,6 @@ int callin_function_call1()
   int	rc= 0;
   int rtnflags;
   char *str="my ascii string data";
-  int	len;
-  len = strlen(str);
   int numargs=0;
   Callin_char_t *routinename="";
   Callin_char_t *entryname="";
@@ -51,7 +50,7 @@ int callin_function_call1()
   rc = IRISPUSHFUNC(&rtnflags, strlen(entryname), entryname, strlen(routinename), routinename); 
   printf("IRISPUSHRTN rc:%d\n",rc);
 
-  rc = IRISPUSHSTR(len, str);
+  rc = IRISPUSHSTR(strlen(str), str);
   RETURNIFERROR(rc)
   numargs++;
 
@@ -78,8 +77,6 @@ int callin_function_call2()
   int	rc= 0;
   int rtnflags;
   char *str="my ascii string data";
-  int	len;
-  len = strlen(str);
   int numargs=0;
   
   printf("========= Calling callin_function_call2\n");
@@ -91,7 +88,7 @@ int callin_function_call2()
   rc = IRISPUSHFUNC(&rtnflags, strlen("Entry3"), "Entry3", strlen("TestRoutine"), "TestRoutine"); 
   printf("IRISPUSHRTN rc:%d\n",rc);
 
-  rc = IRISPUSHSTR(len, str);
+  rc = IRISPUSHSTR(strlen(str), str);
   RETURNIFERROR(rc)
   numargs++;
 
@@ -204,8 +201,6 @@ int callin_classmethod_call2()
 {
   int	rc= 0;
   char *str="my ascii string data";
-  int	len;
-  len = strlen(str);
   int numargs=0;
   int classreturnvalue=1;
   Callin_char_t *classname="TestClass";
@@ -220,7 +215,7 @@ int callin_classmethod_call2()
   printf("IRISPUSHCLASSMETHOD rc:%d\n",rc);
   RETURNIFERROR(rc)
 
-  rc = IRISPUSHSTR(len, str);
+  rc = IRISPUSHSTR(strlen(str), str);
   RETURNIFERROR(rc)
   numargs++;
 
