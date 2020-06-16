@@ -4,18 +4,15 @@ CFLAGS        = -g3 -ggdb -O3 -I /usr/irissys/dev/iris-callin/include
 LDFLAGS       = -L/usr/irissys/bin -Wl,-rpath,/usr/irissys/bin
 LIBS          = -lirisdb
 LIBSMT        = -lirisdbt
-PROGRAM       = callin_misc callin_multithreads callin_signal_test callout.so 
+PROGRAM       = callin_misc callin_multithreads callout.so 
 
 all:            $(PROGRAM)
 
-callin_misc:	callin_misc.o callin_misc_calls.o callin_execute.o callin_misc_value.o
-	$(CC) callin_misc.o callin_misc_calls.o callin_execute.o callin_misc_value.o $(LDFLAGS) $(LIBS) -o callin_misc
+callin_misc:	callin_misc.o callin_misc_calls.o callin_execute.o callin_misc_value.o shdir.o
+	$(CC) callin_misc.o callin_misc_calls.o callin_execute.o callin_misc_value.o shdir.o $(LDFLAGS) $(LIBS) -o callin_misc
 
-callin_multithreads:	callin_multithreads.o
-	$(CC) callin_multithreads.o $(LDFLAGS) $(LIBSMT) -pthread -o callin_multithreads
-
-callin_signal_test:	callin_signal_test.o
-	$(CC) callin_signal_test.o $(LDFLAGS) $(LIBS) -o callin_signal_test
+callin_multithreads:	callin_multithreads.o shdir.o
+	$(CC) callin_multithreads.o shdir.o $(LDFLAGS) $(LIBSMT) -pthread -o callin_multithreads
 
 callout.so:	callout.o
 	$(CC) callout.o -shared -o callout.so

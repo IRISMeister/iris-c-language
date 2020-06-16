@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
+extern char *shdir;
+
 int main(int argc, char * argv[])
 {
 
@@ -23,11 +25,7 @@ int main(int argc, char * argv[])
   strcpy((char *) pexename.str,exename);
   pexename.len = (unsigned short)strlen((char *) pexename.str);
 
-#ifdef __linux__
-  rc=IRISSETDIR("/usr/irissys/mgr");
-#else
-  rc=IRISSETDIR("C:\\InterSystems\\IRIS\\mgr");
-#endif
+  rc=IRISSETDIR(shdir);
   printf("IRISSETDIR rc:%d\n",rc);
 
   rc = IRISSECURESTART(&pusername, &ppassword, &pexename, termflag, timeout, NULL, NULL);

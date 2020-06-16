@@ -40,6 +40,8 @@ void *thread_noiris_main(void *);   // a thread for non IRIS
 volatile sig_atomic_t eflag = 0;    // flag to end the loop
 #define NUMTHREADS 3	/* Number of threads */
 
+extern char *shdir;
+
 /*
   This is a sample of how to utilize the call-in interface in a multi-threaded environment.
   It starts multiple threads, and within each thread calls IRISStart to create a connection.
@@ -91,7 +93,7 @@ int main(int argc, char* argv[])
    * NOTE:  The call to IRISSETDIR is required to set the installation directory value
    * when linking using a shared library (.dll, or .so) on Windows, and some Unix platforms.
    */	
-  rc=IRISSETDIR("/usr/irissys/mgr");
+  rc=IRISSETDIR(shdir);
   printf("IRISSETDIR rc:%d\n",rc);
 
   for (i=0; i < numthreads; i++) {
@@ -148,7 +150,7 @@ int main(int argc, char* argv[])
    * NOTE:  The call to IRISSETDIR is required to set the installation directory value
    * when linking using a shared library (.dll, or .so) on Windows, and some Unix platforms.
    */
-  rc=IRISSETDIR("C:\\InterSystems\\IRIS\\mgr");
+  rc=IRISSETDIR(shdir);
   printf("IRISSETDIR rc:%d\n",rc);
 
   for (i=0; i < numthreads; i++) {

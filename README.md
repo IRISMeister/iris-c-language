@@ -1,12 +1,20 @@
 The simpest example of how to build/use IRIS Callin and Callout in Linux.  
-Callin (callin) will get value from ^test global and set ^test2(1) to ^test2(10) global nodes.  
-Multi-thread Callin (callint) will set ^CallinTest global nodes from within each thread.  
+Callin (callin_misc) will perform various access.  Unicode test is using Japanese as an example.  See log section below.  
+Multi-thread Callin (callin_multithreads) will set ^callinMT global nodes from within each thread.  
 Callout (callout.so) will add two given integers and returns it.  
 
-see https://docs.intersystems.com/iris20191j/csp/docbook/Doc.View.cls?KEY=BXCI
+see  
+https://docs.intersystems.com/irislatestj/csp/docbook/Doc.View.cls?KEY=BXCI  
+https://docs.intersystems.com/irislatestj/csp/docbook/Doc.View.cls?KEY=BGCL_library
+
+Verified under  
+IRIS for Windows (x86-64) 2020.1 (Build 215U) Mon Mar 30 2020 20:14:33 EDT  
+IRIS for UNIX (Ubuntu Server LTS for x86-64) 2020.1 (Build 215U) Mon Mar 30 2020 20:25:33 EDT  
+
 # How to RUN
 
 ## Start IRIS on Docker(Ubuntu)
+Nothing to do except starting IRIS. Everything is ready yo go.
 ```bash
 user@host:~/$ git clone https://github.com/IRISMeister/iris-c-language.git
 user@host:~/$ cd iris-c-language
@@ -15,17 +23,7 @@ user@host:~/iris-c-language$ docker-compose exec iris bash
 irisowner@ec21549f2063:~$
 ```
 ## On Windows
-If you want to build and run these examples on Windows, do the following from [VS 20xx x64 Native Tools command prompt].  Images will be created in x64\ folder.
-```bat
-c:\Program Files (x86)\Microsoft Visual Studio\2017\Professional>cd \temp
-C:\temp>git clone https://github.com/IRISMeister/iris-c-language.git
-C:\temp>cd iris-c-language\src
-C:\temp\iris-c-language\src>nmake -f makefile.mak
-C:\temp\iris-c-language\src>Set Path=C:\InterSystems\IRIS\bin;%Path%
-C:\temp\iris-c-language\src>x64\callin_misc.exe
-C:\temp\iris-c-language\src>x64\callin_multithreads.exe
-```
-If you get C4819 error while compiling callin_misc_value.c,  make sure it is saved as UTF8 with BOM.
+See the last section.
 
 ## Various functions and various data (Unicode, Long Ascii String, Long Unicode String) handling.
 ```bash
@@ -218,6 +216,34 @@ user@host:~/iris-c-language$
 user@host:~/iris-c-language$ docker-compose stop
 ```
 
-If you want to run callin programs against non-container version of IRIS, you need to execute it as user 'irisowner'. 
-$ sudo -u irisowner ./callin
+If you want to run callin programs against non-container version of IRIS, you need to execute it as user 'irisowner' or whatever user which belongs to the group you picked when you installed IRIS.  
+```bash
+$ sudo -u irisowner ./callin  
+```
+or  
+```bash
+$ sudo ./callin
+```
 
+## On Windows
+If you want to build and run these examples on Windows, you need to setup some manually.  
+Assuming IRIS is installed under C:\InterSystems\IRIS\  
+1. Enable %Service_CallIn service and allow password authentication only.
+2. Set two global values.
+```ObjectScript
+USER>Set ^test="abc",^test(1)=12345
+```
+3. Import [TestRoutine.mac](project/TestRoutine.mac) and [User.TestClass.cls](project/User/TestClass.cls) into USER namespace.
+4. Edit [shdir.c](src/shdir.c) to reflect your environment.
+5. Edit username/password value in [callin_misc.c](src/callin_misc.c) and [callin_multithreads.c](src/callin_multithreads.c) to reflect your environment.
+6. Do the following from [VS 20xx x64 Native Tools command prompt].  Images will be created under x64\ folder.
+```bat
+c:\Program Files (x86)\Microsoft Visual Studio\2017\Professional>cd \temp
+C:\temp>git clone https://github.com/IRISMeister/iris-c-language.git
+C:\temp>cd iris-c-language\src
+C:\temp\iris-c-language\src>nmake -f makefile.mak
+C:\temp\iris-c-language\src>Set Path=C:\InterSystems\IRIS\bin;%Path%
+C:\temp\iris-c-language\src>x64\callin_misc.exe
+C:\temp\iris-c-language\src>x64\callin_multithreads.exe
+```
+If you get C4819 error while compiling callin_misc_value.c,  make sure it is saved as UTF8 with BOM.
