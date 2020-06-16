@@ -253,6 +253,7 @@ int runtest(int p) {
   // Uncomment a below line to tigger SIGSEGV intentionally.
   // if (p==0) { printf("Thread(%d) #%ld is firing SIGSEGV.\n",p,pthread_self()); *foo = 1; } 
 
+  srand( (unsigned)THREADID);
   while ( !eflag ) {
 
   // Do some dummy work
@@ -332,8 +333,8 @@ void sigaction_handler_async(int sig, siginfo_t *info, void *ctx) {
   // Never a good idea to use printf here...printf() is not async-signal-safe functions!!!
   printf("Signal caught by #%ld\n",THREADID);
   if (info!=NULL) printf("si_signo:%d si_code:%d si_pid:%d si_uid:%d\n", info->si_signo, info->si_code,(int)info->si_pid, (int)info->si_uid);
-  // Do not exit here because doing so will leave child processes (IRIS processes) as zombie...which is subject to be cleared by CLNDMN.
-  // Instead, set a flag to finish threads which is connected to IRIS via IRISSTART(). 
+  // Do not exit here because doing so will leave dead IRIS processes...which is subject to be cleared by CLNDMN.
+  // Instead, set a flag to finish threads cleanly.
   eflag = 1;
 }
 #else
