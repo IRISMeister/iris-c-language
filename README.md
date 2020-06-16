@@ -15,14 +15,17 @@ user@host:~/iris-c-language$ docker-compose exec iris bash
 irisowner@ec21549f2063:~$
 ```
 ## On Windows
-If you want to build these examples on Windows, do this from VS 2017 x64 Native Tools command prompt.  Images will be created in x64\ folder.
+If you want to build and run these examples on Windows, do the following from [VS 20xx x64 Native Tools command prompt].  Images will be created in x64\ folder.
 ```bat
 c:\Program Files (x86)\Microsoft Visual Studio\2017\Professional>cd \temp
 C:\temp>git clone https://github.com/IRISMeister/iris-c-language.git
 C:\temp>cd iris-c-language\src
 C:\temp\iris-c-language\src>nmake -f makefile.mak
+C:\temp\iris-c-language\src>Set Path=C:\InterSystems\IRIS\bin;%Path%
+C:\temp\iris-c-language\src>x64\callin_misc.exe
+C:\temp\iris-c-language\src>x64\callin_multithreads.exe
 ```
-If you get C4819 error whike compiling callin_misc_value.c,  make sure it is saved as UTF8 with BOM.
+If you get C4819 error while compiling callin_misc_value.c,  make sure it is saved as UTF8 with BOM.
 
 ## Various functions and various data (Unicode, Long Ascii String, Long Unicode String) handling.
 ```bash
@@ -141,7 +144,7 @@ DEMO>w $E(^long(2),$L(^long(2))-10,*)
 DEMO>h
 ```
 ## Multithreads test.
-You can't stop a program which was linked against IRIS multi-threads library via Ctrl-c.
+You can stop callin_multithreads by Ctrl-c.
 ```bash
 irisowner@ec21549f2063:~/src$ ./callin_multithreads
 Starting main process. #140432145268544
