@@ -233,14 +233,16 @@ Assuming IRIS is installed under C:\InterSystems\IRIS\
 ```ObjectScript
 USER>Set ^test="abc",^test(1)=12345
 ```
-3. Import [TestRoutine.mac](project/TestRoutine.mac) and [User.TestClass.cls](project/User/TestClass.cls) into USER namespace.
-4. Edit [shdir.c](src/shdir.c) to reflect your environment.
-5. Edit username/password(_SYSTEM/SYS by default) value in [callin_misc.c](src/callin_misc.c) and [callin_multithreads.c](src/callin_multithreads.c) to reflect your environment.
-6. Do the following from [VS 20xx x64 Native Tools command prompt].  Images will be created under x64\ folder.
+3. git clone
 ```bat
-c:\Program Files (x86)\Microsoft Visual Studio\2017\Professional>cd \temp
 C:\temp>git clone https://github.com/IRISMeister/iris-c-language.git
-C:\temp>cd iris-c-language\src
+```
+4. Import [TestRoutine.mac](project/TestRoutine.mac) and [User.TestClass.cls](project/User/TestClass.cls) into USER namespace.
+5. Edit [shdir.c](src/shdir.c) to reflect your environment.
+6. Edit username/password(_SYSTEM/SYS by default) value in [callin_misc.c](src/callin_misc.c) and [callin_multithreads.c](src/callin_multithreads.c) to reflect your environment.
+7. Do the following from [VS 20xx x64 Native Tools command prompt].  Images will be created under x64\ folder.
+```bat
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional>cd \temp\iris-c-language\src
 C:\temp\iris-c-language\src>nmake -f makefile.mak
 C:\temp\iris-c-language\src>Set Path=C:\InterSystems\IRIS\bin;%Path%
 C:\temp\iris-c-language\src>x64\callin_misc.exe
