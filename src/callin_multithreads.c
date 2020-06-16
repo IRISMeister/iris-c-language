@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
     pthread_join(th[i], NULL);
   }
 #ifdef ADD_NON_IRIS
-  printf("waiting NON_IRIS thread\n");
+  printf("Waiting a NON_IRIS thread.\n");
   pthread_join(th2, NULL);
 #endif
   printf("All threads have exited - done\n");
@@ -121,9 +121,12 @@ int main(int argc, char* argv[])
   int	rc;
   int	numthreads = NUMTHREADS;
   int	i;
+#ifdef ADD_NON_IRIS
+  HANDLE	threadlist[NUMTHREADS+1];
+#else
   HANDLE	threadlist[NUMTHREADS];
+#endif
   HANDLE	th;
-  DWORD	exit_code;
   int targ[NUMTHREADS];
   
   printf("Starting main process. #%ld\n",THREADID);
@@ -149,12 +152,12 @@ int main(int argc, char* argv[])
   printf("IRISSETDIR rc:%d\n",rc);
 
   for (i=0; i < numthreads; i++) {
-  targ[i]=i;
+    targ[i]=i;  // parameter 
     th = CreateThread(NULL,
-            0,
+            FALSE,
             (LPTHREAD_START_ROUTINE)thread_main,
             &targ[i],
-            0,
+            FALSE,
             NULL);
      if (!th) {
         rc = GetLastError();
@@ -163,34 +166,13 @@ int main(int argc, char* argv[])
         threadlist[threadcnt++] = th;
     }
   }
-  printf("Waiting for threads to exit...\n");
-
-  /* Wait for the threads to exit */
-  while (threadcnt) {
-     rc = WaitForMultipleObjectsEx(threadcnt,threadlist,0,INFINITE,1);
-     if ((rc == WAIT_OBJECT_0) ||
-         ((rc > WAIT_OBJECT_0) && ((unsigned int)rc < (WAIT_OBJECT_0 + threadcnt)))) {
-        rc -= WAIT_OBJECT_0;
-        if (GetExitCodeThread(threadlist[rc],&exit_code)) {
-     if (exit_code != STILL_ACTIVE) {
-        if (--threadcnt) {
-           /* Fill dead thread's slot with the last thread
-              in the list and drop the last thread from
-              threadcnt */
-           threadlist[rc] = threadlist[threadcnt];
-        }
-     }
-        }
-     } else if (rc == -1) {
-     /* some kind of error */
-        rc = GetLastError();
-        printf("Unexpected error: %d\n",rc);
-     }
-  }
 #ifdef ADD_NON_IRIS
-  printf("waiting NON_IRIS thread\n");
-  WaitForSingleObject(th2, INFINITE);
+  printf("Waiting a NON_IRIS thread.\n");
+  threadlist[threadcnt++] = th2;
 #endif
+  printf("Waiting for threads to exit...\n");
+  rc = WaitForMultipleObjectsEx(threadcnt,threadlist,TRUE,INFINITE,TRUE);
+
   printf("All threads have exited - done\n");
   return 0;
 }
@@ -333,7 +315,7 @@ void sigaction_handler(int signal, siginfo_t *si, void *arg)
 #endif
 
 #ifndef __linux__
-// handler for SIGSEGV
+// handler for ACCESS_VIOLATION
 int exception_filter(unsigned int code, struct _EXCEPTION_POINTERS *ep)
 {
   if (code == EXCEPTION_ACCESS_VIOLATION)
@@ -362,13 +344,14 @@ BOOL WINAPI ctrl_handler(DWORD fdwCtrlType)
   {
   // Handle signals. 
   case CTRL_C_EVENT:
-  printf("Ctrl-C event caught by %d\n\n",THREADID);
-  case CTRL_CLOSE_EVENT:
   case CTRL_BREAK_EVENT:
-  case CTRL_LOGOFF_EVENT:  // is this OK?
+  case CTRL_LOGOFF_EVENT:
+    printf("Event (%x) caught by %d\n\n",fdwCtrlType,THREADID);
     eflag = 1;
     return TRUE;
 
+  // see https://support.microsoft.com/ja-jp/help/2607828
+  case CTRL_CLOSE_EVENT:  
   case CTRL_SHUTDOWN_EVENT:
   default:
     return FALSE;
