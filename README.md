@@ -235,7 +235,7 @@ USER>Set ^test="abc",^test(1)=12345
 ```
 3. Import [TestRoutine.mac](project/TestRoutine.mac) and [User.TestClass.cls](project/User/TestClass.cls) into USER namespace.
 4. Edit [shdir.c](src/shdir.c) to reflect your environment.
-5. Edit username/password value in [callin_misc.c](src/callin_misc.c) and [callin_multithreads.c](src/callin_multithreads.c) to reflect your environment.
+5. Edit username/password(_SYSTEM/SYS by default) value in [callin_misc.c](src/callin_misc.c) and [callin_multithreads.c](src/callin_multithreads.c) to reflect your environment.
 6. Do the following from [VS 20xx x64 Native Tools command prompt].  Images will be created under x64\ folder.
 ```bat
 c:\Program Files (x86)\Microsoft Visual Studio\2017\Professional>cd \temp
