@@ -249,3 +249,38 @@ C:\temp\iris-c-language\src>x64\callin_misc.exe
 C:\temp\iris-c-language\src>x64\callin_multithreads.exe
 ```
 If you get C4819 error while compiling callin_misc_value.c,  make sure it is saved as UTF8 with BOM.
+
+## From Cache' to IRIS
+[makefile-cache.mak](src/makefile-cache.mak), [callin_multithreads-cache.c](src/callin_multithreads-cache.c), [callout-cache.c](src/callout-cache.c) are for Cache' build.  
+You can build it by following command if you have appropriate Cache' files.  
+```bat
+C:\temp\iris-c-language\src>nmake -f makefile-cache.mak
+```
+If you are migrating such existing callin/callout programs from Cache' to IRIS, you can build with IRIS by simply modifying several lines.
+
+[makefile-cache.mak](src/makefile-cache.mak)  
+Change include files location.
+```
+        /I"..\\" /I"C:\InterSystems\Cache201722\Cache\callin" 
+```
+```
+        /I"..\\" /I"C:\InterSystems\IRIS\dev\iris-callin\include" 
+```
+Change library files location.
+```
+        /DYNAMICBASE:NO "cachet.lib" \
+        /LIBPATH:"C:\InterSystems\Cache201722\bin"
+```
+```
+        /DYNAMICBASE:NO "irisdbt.lib" \
+        /LIBPATH:"C:\InterSystems\IRIS\dev\iris-callin\lib"
+```
+
+[shdir-cache.c](src\shdir-cache.c)  
+Change installation path.
+```
+char *shdir="C:\\InterSystems\\CACHE\\mgr";
+```
+```
+char *shdir="C:\\InterSystems\\IRIS\\mgr";
+```
