@@ -1,3 +1,4 @@
+#pragma warning(disable : 4996)
 #define ZF_DLL  /* Required only for dynamically linked libraries. */
 #include <iris-cdzf.h>  /* Required for all Callout code. */
 #include <stdlib.h>
@@ -12,7 +13,6 @@ int addTwoIntegers(int a, int b, int*outsum) {
 int addTwoIntegersAndSave(int a, int b, int*outsum) {
    int	rc = 0;
    Callin_char_t *gloref="callout";
-   Callin_char_t p[100];
 
    *outsum = a+b;   /* set value to be returned by the $ZF function call */
    rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
