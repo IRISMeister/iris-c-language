@@ -10,9 +10,9 @@ int addTwoIntegers(int a, int b, int *outsum) {
    return ZF_SUCCESS;   /* set the exit status code */
 }
 
-int addTwoBigUnsignedIntegers(char *a, char *b, char *outsum) {
-   unsigned long long val=atoll(a)+atoll(b);
-   sprintf(outsum,"%llu",val);
+int addTwoBigIntegers(char *a, char *b, char *outsum) {
+   long long val=atoll(a)+atoll(b);
+   sprintf(outsum,"%lld",val);
    return ZF_SUCCESS;   /* set the exit status code */
 }
 
@@ -84,7 +84,7 @@ int callRoutine() {
 
 ZFBEGIN
    ZFENTRY("AddInt","iiP",addTwoIntegers)
-   ZFENTRY("AddBigUSInt","cc1C",addTwoBigUnsignedIntegers)
+   ZFENTRY("AddBigInt","ccC",addTwoBigIntegers)
    ZFENTRY("AddIntSave","iiP",addTwoIntegersAndSave)
    ZFENTRY("WaitIRISEvent","",waitIRISEvent)
    ZFENTRY("CallRoutine","",callRoutine)
