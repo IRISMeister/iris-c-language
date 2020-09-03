@@ -261,7 +261,7 @@ If you are migrating such existing callin/callout programs from Cache' to IRIS, 
 [makefile-cache.mak](src/makefile-cache.mak)  
 Change include files location.
 ```
-        /I"..\\" /I"C:\InterSystems\Cache201722\Cache\callin" 
+        /I"..\\" /I"C:\InterSystems\Cache\dev\callin" 
 ```
 ```
         /I"..\\" /I"C:\InterSystems\IRIS\dev\iris-callin\include" 
@@ -269,7 +269,7 @@ Change include files location.
 Change library files location.
 ```
         /DYNAMICBASE:NO "cachet.lib" \
-        /LIBPATH:"C:\InterSystems\Cache201722\bin"
+        /LIBPATH:"C:\InterSystems\Cache\bin"
 ```
 ```
         /DYNAMICBASE:NO "irisdbt.lib" \

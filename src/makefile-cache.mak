@@ -18,14 +18,14 @@ CPPFLAGS=\
         /DNDEBUG /D_CONSOLE\
         /DUNICODE\
         /D_UNICODE\
-        /I"..\\" /I"C:\InterSystems\Cache201722\Cache\callin" 
+        /I"..\\" /I"C:\InterSystems\Cache\dev\callin" 
 
 LINK_FLAGS=\
         /nologo\
         /subsystem:console\
         /DEBUG:FULL /MACHINE:X64\
         /DYNAMICBASE:NO "cachet.lib" \
-        /LIBPATH:"C:\InterSystems\Cache201722\bin"
+        /LIBPATH:"C:\InterSystems\Cache\bin"
 
 LINK_DLL_FLAGS=\
         /nologo\
