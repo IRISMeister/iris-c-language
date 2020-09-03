@@ -4,8 +4,8 @@ Multi-thread Callin (callin_multithreads) will set ^callinMT global nodes from w
 Callout (callout.so) will add two given integers and returns it.  
 
 see  
-https://docs.intersystems.com/irislatestj/csp/docbook/Doc.View.cls?KEY=BXCI  
-https://docs.intersystems.com/irislatestj/csp/docbook/Doc.View.cls?KEY=BGCL_library
+https://docs.intersystems.com/irislatest/csp/docbook/Doc.View.cls?KEY=BXCI  
+https://docs.intersystems.com/irislatest/csp/docbook/Doc.View.cls?KEY=BGCL_library
 
 Verified under  
 IRIS for Windows (x86-64) 2020.1 (Build 215U) Mon Mar 30 2020 20:14:33 EDT  
