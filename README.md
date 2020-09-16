@@ -14,7 +14,7 @@ IRIS for UNIX (Ubuntu Server LTS for x86-64) 2020.1 (Build 215U) Mon Mar 30 2020
 # How to RUN
 
 ## Start IRIS on Docker(Ubuntu)
-Nothing to do except starting IRIS. Everything is ready yo go.
+Nothing to do except starting IRIS. Everything is ready to go.
 ```bash
 user@host:~/$ git clone https://github.com/IRISMeister/iris-c-language.git
 user@host:~/$ cd iris-c-language
@@ -22,6 +22,19 @@ user@host:~/iris-c-language$ docker-compose up -d
 user@host:~/iris-c-language$ docker-compose exec iris bash
 irisowner@ec21549f2063:~$
 ```
+If you change c source code, you need to rebuild an image to reflect the changes.  
+(because I'm avoiding the use of volume binding to stay away from annoying errors on docker for windows...)
+```bash
+user@host:~/iris-c-language$ docker-compose build
+```
+Or copy them into running container and 'make' it.
+```bash
+user@host:~/iris-c-language$ docker-compose exec iris bash
+irisowner@ec21549f2063:~$ cd src
+irisowner@ec21549f2063:~$ make
+```
+
+
 ## On Windows
 See the last section.
 
@@ -61,6 +74,19 @@ IRISPUSHINT rc:0
 IRISINVOKECLASSMETHOD rc:0
 IRISCONVERT rc:0
 return value as INT4 :456
+========= Calling callin_classmethod_call3
+IRISPUSHCLASSMETHOD rc:0
+IRISINVOKECLASSMETHOD rc:0
+IRISCONVERT rc:0
+return value as STRING :ABC
+========= Calling callin_classmethod_call4
+IRISPUSHCLASSMETHOD rc:0
+IRISINVOKECLASSMETHOD rc:0
+IRISCONVERT rc:0
+longval.len:1000000
+IRISEXSTRKILL rc:0
+size of return value 1000000
+return value as STRING :AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA....
 ========= Calling callin_globals_set_and_get
 IRISPUSHGLOBAL rc:0
 IRISGLOBALGET rc:0
@@ -102,8 +128,13 @@ irisowner@ec21549f2063:~/src$ iris session iris -U demo
 ```
 ```ObjectScript
 DEMO>zw ^test
-^test="06/11/2020 12:10:04;my ascii string data;100"
+^test="abc"
 ^test(1)=12345
+^test("MyClassMethod1")="06/11/2020 12:10:04"
+^test("MyClassMethod2")="06/11/2020 12:10:04;my ascii string data;100"
+^test("MyClassMethod3")="06/11/2020 12:10:04;my ascii string data"
+^test("MyClassMethod4",1)="06/11/2020 12:10:04"
+^test("MyClassMethod4",2)="my ascii string data"
 DEMO>
 DEMO>zw ^test2
 ^test2(1)="abc"
@@ -218,11 +249,11 @@ user@host:~/iris-c-language$ docker-compose stop
 
 If you want to run callin programs against non-container version of IRIS, you need to execute it as user 'irisowner' or whatever user which belongs to the group you picked when you installed IRIS.  
 ```bash
-$ sudo -u irisowner ./callin  
+$ sudo -u irisowner ./callin_misc
 ```
 or  
 ```bash
-$ sudo ./callin
+$ sudo ./callin_misc
 ```
 
 ## On Windows

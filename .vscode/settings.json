@@ -3,5 +3,6 @@
         "array": "c",
         "string": "c",
         "string_view": "c"
-    }
+    },
+    "objectscript.conn.active": true
 }

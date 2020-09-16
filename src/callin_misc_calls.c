@@ -237,6 +237,115 @@ int callin_classmethod_call2()
   return 0;
 }
 
+int callin_classmethod_call3()
+{
+  int	rc= 0;
+  char *str="my ascii string data";
+  int numargs=0;
+  int classreturnvalue=1;
+  Callin_char_t *classname="TestClass";
+  Callin_char_t *methodname="MyClassMethod3";
+
+  printf("========= Calling callin_classmethod_call3\n");
+  // Do ##class(TestClass).MyClassMethod3(str) 
+  // Function spec
+  //   Accept one param: string
+  //   Return string
+  rc = IRISPUSHCLASSMETHOD(strlen(classname), classname, strlen(methodname), methodname,classreturnvalue);
+  printf("IRISPUSHCLASSMETHOD rc:%d\n",rc);
+  RETURNIFERROR(rc)
+
+  rc = IRISPUSHSTR(strlen(str), str);
+  RETURNIFERROR(rc)
+  numargs++;
+
+  rc = IRISINVOKECLASSMETHOD(numargs);
+  printf("IRISINVOKECLASSMETHOD rc:%d\n",rc);
+  RETURNIFERROR(rc)
+
+#define ASCII_DATA_SIZE 100
+  unsigned char *c;
+  unsigned char returnval[ASCII_DATA_SIZE+1];
+
+  IRIS_ASTR retval;
+
+  retval.len = 100;
+  rc = IRISCONVERT(IRIS_STRING,&retval);
+  printf("IRISCONVERT rc:%d\n",rc);
+  RETURNIFERROR(rc)
+  memcpy(returnval,retval.str,retval.len);
+  returnval[retval.len] = '\0';
+  printf("return value as STRING :%s\n",returnval);
+
+  return 0;
+}
+
+int callin_classmethod_call4()
+{
+  int	rc= 0;
+  char *str="my ascii string data";
+  int numargs=0;
+  int classreturnvalue=1;
+  Callin_char_t *classname="TestClass";
+  Callin_char_t *methodname="MyClassMethod4";
+
+  printf("========= Calling callin_classmethod_call4\n");
+  // Do ##class(TestClass).MyClassMethod4(str) 
+  // Function spec
+  //   Accept one param: string
+  //   Return string(long)
+  rc = IRISPUSHCLASSMETHOD(strlen(classname), classname, strlen(methodname), methodname,classreturnvalue);
+  printf("IRISPUSHCLASSMETHOD rc:%d\n",rc);
+  RETURNIFERROR(rc)
+
+  rc = IRISPUSHSTR(strlen(str), str);
+  RETURNIFERROR(rc)
+  numargs++;
+
+  rc = IRISINVOKECLASSMETHOD(numargs);
+  printf("IRISINVOKECLASSMETHOD rc:%d\n",rc);
+  RETURNIFERROR(rc)
+
+#define ASCII_LONG_DATA_SIZE 1000000
+  unsigned char *c;
+  IRIS_EXSTR longval;
+
+  //size up to IRIS_MAXLOSTSZ
+  c=IRISEXSTRNEW(&longval,ASCII_LONG_DATA_SIZE);  // Allocates the requested amount of storage. 
+  if (!c) {
+    printf("IRISEXSTRNEWH failed.\n");
+    return -1;
+  }
+
+  //printf("prior %p\n",c);
+  //printf("prior %p\n",longval.str.ch);
+
+  rc = IRISCONVERT(IRIS_LASTRING,&longval);
+  printf("IRISCONVERT rc:%d\n",rc);
+  RETURNIFERROR(rc)
+
+  printf("longval.len:%d\n",longval.len);
+
+  //printf("after %p\n",c);
+  //printf("after %p\n",longval.str.ch);
+
+  // Allocate user data area
+  char *data_ascii_long;
+  data_ascii_long = (char *)malloc(longval.len+1);
+  memcpy(data_ascii_long,longval.str.ch,longval.len+1);
+  data_ascii_long[longval.len] = '\0';
+
+  rc=IRISEXSTRKILL(&longval); // Releases the storage associated with it.  
+  printf("IRISEXSTRKILL rc:%d\n",rc);
+  RETURNIFERROR(rc)
+
+  printf("size of return value %ld\n",strlen(data_ascii_long));
+  printf("return value as STRING :%.50s....\n",data_ascii_long);
+  free(data_ascii_long);
+
+  return 0;
+}
+
 int callin_globals_set_and_get()
 {
   int	rc= 0;
