@@ -5,6 +5,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#define ASCII_LONG_DATA_SIZE 1000000
+#ifndef USEMALLOC
+  char data_ascii_long[ASCII_LONG_DATA_SIZE+1];
+#endif
+
 int callin_routine_call()
 {
   int	rc= 0;
@@ -306,32 +311,20 @@ int callin_classmethod_call4()
   printf("IRISINVOKECLASSMETHOD rc:%d\n",rc);
   RETURNIFERROR(rc)
 
-#define ASCII_LONG_DATA_SIZE 1000000
-  unsigned char *c;
   IRIS_EXSTR longval;
-
-  //size up to IRIS_MAXLOSTSZ
-  c=IRISEXSTRNEW(&longval,ASCII_LONG_DATA_SIZE);  // Allocates the requested amount of storage. 
-  if (!c) {
-    printf("IRISEXSTRNEWH failed.\n");
-    return -1;
-  }
-
-  //printf("prior %p\n",c);
-  //printf("prior %p\n",longval.str.ch);
 
   rc = IRISCONVERT(IRIS_LASTRING,&longval);
   printf("IRISCONVERT rc:%d\n",rc);
   RETURNIFERROR(rc)
 
   printf("longval.len:%d\n",longval.len);
-
-  //printf("after %p\n",c);
-  //printf("after %p\n",longval.str.ch);
+  printf("longval.str.ch %p\n",longval.str.ch);
 
   // Allocate user data area
+#ifdef USEMALLOC
   char *data_ascii_long;
   data_ascii_long = (char *)malloc(longval.len+1);
+#endif
   memcpy(data_ascii_long,longval.str.ch,longval.len+1);
   data_ascii_long[longval.len] = '\0';
 
@@ -341,7 +334,9 @@ int callin_classmethod_call4()
 
   printf("size of return value %ld\n",strlen(data_ascii_long));
   printf("return value as STRING :%.50s....\n",data_ascii_long);
+#ifdef USEMALLOC
   free(data_ascii_long);
+#endif
 
   return 0;
 }
