@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
   sa_asyncsig.sa_flags = SA_SIGINFO;
 
   if ( sigaction(SIGINT, &sa_asyncsig, NULL) < 0 ) {
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 #endif
 

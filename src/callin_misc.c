@@ -61,7 +61,7 @@ int main(int argc, char * argv[])
   printf("IRISSECURESTART Status :%s %d \n",sMes,rc);
   if (rc) { 
     IRISEND(); 
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
 #ifdef __linux__
@@ -99,7 +99,7 @@ int main(int argc, char * argv[])
   IRISEND();
 
   printf("Exiting.\n");
-  exit(0);
+  exit(EXIT_SUCCESS);
 }
 
 
