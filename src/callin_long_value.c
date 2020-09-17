@@ -13,11 +13,7 @@ extern char *shdir;
 int callin_classmethod();
 
 #define ASCII_LONG_DATA_SIZE 1000000
-//#define USEMALLOC
-#ifndef USEMALLOC
-  char data_ascii_long[ASCII_LONG_DATA_SIZE+1];
-#endif
-
+char data_ascii_long[ASCII_LONG_DATA_SIZE+1];
 
 int main(int argc, char * argv[])
 {
@@ -127,17 +123,6 @@ int callin_classmethod()
   printf("longval.len:%d\n",longval.len);
   printf("longval.str.ch %p\n",longval.str.ch);
 
-  // Allocate user data area
-#ifdef USEMALLOC
-  char *data_ascii_long;
-  data_ascii_long = (char *)malloc(longval.len+1);
-  if(data_ascii_long == NULL) {
-    printf("malloc failed.\n");
-    rc=IRISEXSTRKILL(&longval); // Releases the storage associated with it.  
-    printf("IRISEXSTRKILL rc:%d\n",rc);
-    return -1;
-  }
-#endif
   memcpy(data_ascii_long,longval.str.ch,longval.len+1);
   data_ascii_long[longval.len] = '\0';
 
@@ -147,9 +132,6 @@ int callin_classmethod()
 
   printf("size of return value %ld\n",strlen(data_ascii_long));
   printf("return value as STRING :%.50s....\n",data_ascii_long);
-#ifdef USEMALLOC
-  free(data_ascii_long);
-#endif
 
   return 0;
 }
