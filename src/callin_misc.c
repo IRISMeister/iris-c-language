@@ -6,6 +6,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef __linux__
+#include <sys/time.h>
+#include <sys/resource.h>
+#endif
 extern char *shdir;
 
 int main(int argc, char * argv[])
@@ -60,6 +64,18 @@ int main(int argc, char * argv[])
     exit(1);
   }
 
+#ifdef __linux__
+	struct rusage r;
+#endif
+
+#ifdef __linux__
+  if (getrusage(RUSAGE_SELF, &r) != 0) {
+    printf("getrusage() error.\n");
+    exit(1);
+  }
+  printf("maxrss=%ld\n", r.ru_maxrss);
+#endif
+
   callin_routine_call();
   callin_function_call1();
   callin_function_call2();
@@ -74,7 +90,16 @@ int main(int argc, char * argv[])
   callin_value_long_ascii();
   callin_value_long_unicode();
 
+#ifdef __linux__
+  if (getrusage(RUSAGE_SELF, &r) != 0) {
+    printf("getrusage() error.\n");
+    exit(1);
+  }
+  printf("maxrss=%ld\n", r.ru_maxrss);
+#endif
+
   IRISEND();
+
   printf("Exiting.\n");
   exit(0);
 }
