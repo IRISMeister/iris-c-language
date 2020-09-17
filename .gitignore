@@ -5,6 +5,7 @@ src/callin_misc_value_test
 src/callin_multithreads
 src/callin_error
 src/callin_signal_test
+src/callin_long_value
 src/*.o
 src/lib
 src/sap1238.c
