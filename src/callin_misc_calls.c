@@ -6,6 +6,7 @@
 #include <string.h>
 
 #define ASCII_LONG_DATA_SIZE 1000000
+#define USEMALLOC
 #ifndef USEMALLOC
   char data_ascii_long[ASCII_LONG_DATA_SIZE+1];
 #endif
@@ -324,6 +325,12 @@ int callin_classmethod_call4()
 #ifdef USEMALLOC
   char *data_ascii_long;
   data_ascii_long = (char *)malloc(longval.len+1);
+  if(data_ascii_long == NULL) {
+    printf("malloc failed.\n");
+    rc=IRISEXSTRKILL(&longval); // Releases the storage associated with it.  
+    printf("IRISEXSTRKILL rc:%d\n",rc);
+    return -1;
+  }
 #endif
   memcpy(data_ascii_long,longval.str.ch,longval.len+1);
   data_ascii_long[longval.len] = '\0';

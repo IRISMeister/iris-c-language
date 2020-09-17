@@ -71,7 +71,6 @@ int main(int argc, char * argv[])
 #ifdef __linux__
   if (getrusage(RUSAGE_SELF, &r) != 0) {
     printf("getrusage() error.\n");
-    exit(1);
   }
   printf("maxrss=%ld\n", r.ru_maxrss);
 #endif
@@ -93,7 +92,6 @@ int main(int argc, char * argv[])
 #ifdef __linux__
   if (getrusage(RUSAGE_SELF, &r) != 0) {
     printf("getrusage() error.\n");
-    exit(1);
   }
   printf("maxrss=%ld\n", r.ru_maxrss);
 #endif
