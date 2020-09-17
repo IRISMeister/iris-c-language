@@ -11,12 +11,16 @@
 #endif
 extern char *shdir;
 int callin_classmethod();
+int callin_classmethod_call3();
 
 #define ASCII_LONG_DATA_SIZE 1000000
 char data_ascii_long[ASCII_LONG_DATA_SIZE+1];
 
 int main(int argc, char * argv[])
 {
+
+  int repeatcount=1;
+  if (argc>1) repeatcount=atoi(argv[1]);
 
   // need IRIS_PROGMODE to call callin_routine_geterrorinfo() without being disconnected
   int termflag = IRIS_PROGMODE|IRIS_TTNONE|IRIS_TTNEVER;
@@ -71,8 +75,9 @@ int main(int argc, char * argv[])
 	struct rusage r;
 #endif
 
-  for (int i=0; i<10000; i++) {
+  for (int i=0; i<repeatcount; i++) {
       callin_classmethod();
+//      callin_classmethod_call3();
 #ifdef __linux__
       if (getrusage(RUSAGE_SELF, &r) != 0) {
         printf("getrusage() error.\n");
@@ -114,6 +119,25 @@ int callin_classmethod()
   printf("IRISINVOKECLASSMETHOD rc:%d\n",rc);
   RETURNIFERROR(rc)
 
+  int type = IRISTYPE();
+  printf("IRISTYPE type:");
+  switch(type){
+    case IRIS_ASTRING:
+      printf("IRIS_ASTRING\n");
+      break;
+    case IRIS_WSTRING:
+      printf("IRIS_WSTRING\n");
+      break;
+    case IRIS_LASTRING: 
+      printf("IRIS_LASTRING\n");
+      break;
+    case IRIS_LWSTRING:
+      printf("IRIS_LWSTRING\n");
+      break;
+    defaut:
+      printf("%d\n",type);
+  }
+
   IRIS_EXSTR longval;
 
   rc = IRISCONVERT(IRIS_LASTRING,&longval);
@@ -132,6 +156,69 @@ int callin_classmethod()
 
   printf("size of return value %ld\n",strlen(data_ascii_long));
   printf("return value as STRING :%.50s....\n",data_ascii_long);
+
+  return 0;
+}
+
+
+int callin_classmethod_call3()
+{
+  int	rc= 0;
+  char *str="my ascii string data";
+  int numargs=0;
+  int classreturnvalue=1;
+  Callin_char_t *classname="TestClass";
+  Callin_char_t *methodname="MyClassMethod3";
+
+  printf("========= Calling callin_classmethod_call3\n");
+  // Do ##class(TestClass).MyClassMethod3(str) 
+  // Function spec
+  //   Accept one param: string
+  //   Return string
+  rc = IRISPUSHCLASSMETHODA(strlen(classname), classname, strlen(methodname), methodname,classreturnvalue);
+  printf("IRISPUSHCLASSMETHOD rc:%d\n",rc);
+  RETURNIFERROR(rc)
+
+  rc = IRISPUSHSTRA(strlen(str), str);
+  RETURNIFERROR(rc)
+  numargs++;
+
+  rc = IRISINVOKECLASSMETHOD(numargs);
+  printf("IRISINVOKECLASSMETHOD rc:%d\n",rc);
+  RETURNIFERROR(rc)
+
+  int type = IRISTYPE();
+  printf("IRISTYPE type:");
+  switch(type){
+    case IRIS_ASTRING:
+      printf("IRIS_ASTRING\n");
+      break;
+    case IRIS_WSTRING:
+      printf("IRIS_WSTRING\n");
+      break;
+    case IRIS_LASTRING: 
+      printf("IRIS_LASTRING\n");
+      break;
+    case IRIS_LWSTRING:
+      printf("IRIS_LWSTRING\n");
+      break;
+    defaut:
+      printf("%d\n",type);
+  }
+
+#define ASCII_DATA_SIZE 100
+  unsigned char *c;
+  unsigned char returnval[ASCII_DATA_SIZE+1];
+
+  IRIS_ASTR retval;
+
+  retval.len = 100;
+  rc = IRISCONVERT(IRIS_STRING,&retval);
+  printf("IRISCONVERT rc:%d\n",rc);
+  RETURNIFERROR(rc)
+  memcpy(returnval,retval.str,retval.len);
+  returnval[retval.len] = '\0';
+  printf("return value as STRING :%s\n",returnval);
 
   return 0;
 }
