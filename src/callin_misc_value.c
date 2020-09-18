@@ -131,7 +131,7 @@ int callin_value_long_ascii()
     return -1;
   }
   wmemcpy(c,data_long_uni,wcslen(data_long_uni));
-  longval.len=wcslen(data_long_uni);
+  longval.len=(unsigned int)wcslen(data_long_uni);
 
   rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
   printf("IRISPUSHGLOBAL rc:%d\n",rc);
