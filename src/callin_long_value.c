@@ -10,7 +10,7 @@
 #include <sys/resource.h>
 #endif
 extern char *shdir;
-int callin_classmethod();
+int callin_classmethod_call4();
 int callin_classmethod_call3();
 
 #define ASCII_LONG_DATA_SIZE 1000000
@@ -78,7 +78,7 @@ int main(int argc, char * argv[])
 #endif
 
   for (int i=0; i<repeatcount; i++) {
-      callin_classmethod();
+      callin_classmethod_call4();
 //      callin_classmethod_call3();
 #ifdef __linux__
       if (getrusage(RUSAGE_SELF, &r) != 0) {
@@ -98,7 +98,7 @@ int main(int argc, char * argv[])
 }
 
 
-int callin_classmethod()
+int callin_classmethod_call4()
 {
   int	rc= 0;
   char *str="my ascii string data";
