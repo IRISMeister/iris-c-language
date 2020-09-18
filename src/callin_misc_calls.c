@@ -85,7 +85,7 @@ int callin_function_call1a()
   Callin_char_t *routinename="";
   Callin_char_t *entryname="";
   
-  printf("========= Calling callin_function_call1\n");
+  printf("========= Calling callin_function_call1a\n");
   // Set tSC=Entry1a^TestRoutine(str,int) 
   // Function spec
   //   Accept two params: string and integer
