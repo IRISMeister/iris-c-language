@@ -77,12 +77,13 @@ int main(int argc, char * argv[])
 
   callin_routine_call();
   callin_function_call1();
+  callin_function_call1a();
   callin_function_call2();
   callin_routine_geterrorinfo();
   callin_classmethod_call1();
   callin_classmethod_call2();
   callin_classmethod_call3();
-  callin_classmethod_call4();
+  //callin_classmethod_call4();  //not in good shape, yet
   callin_globals_set_and_get();
   callin_execute();
   callin_value_unicode();

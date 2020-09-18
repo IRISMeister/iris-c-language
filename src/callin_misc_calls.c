@@ -45,13 +45,13 @@ int callin_function_call1()
   Callin_char_t *entryname="";
   
   printf("========= Calling callin_function_call1\n");
-  // Set tSC=Entry2^TestRoutine(str,int) 
+  // Set tSC=Entry1^TestRoutine(str,int) 
   // Function spec
   //   Accept two params: string and integer
   //   Return integer 
   //
   routinename="TestRoutine";
-  entryname="Entry2";
+  entryname="Entry1";
   numargs=0;
   rc = IRISPUSHFUNC(&rtnflags, strlen(entryname), entryname, strlen(routinename), routinename); 
   printf("IRISPUSHRTN rc:%d\n",rc);
@@ -70,10 +70,50 @@ int callin_function_call1()
   RETURNIFERROR(rc)
 
   int retval;
-  rc = IRISCONVERT(IRIS_INT4,&retval);
-  printf("IRISCONVERT rc:%d\n",rc);
-  RETURNIFERROR(rc)
+  rc = IRISPOPINT(&retval);
+  printf("IRISPOPINT rc:%d\n",rc);
   printf("return value as INT4 :%d\n",retval);
+
+  return 0;
+}
+int callin_function_call1a()
+{
+  int	rc= 0;
+  int rtnflags;
+  char *str="my ascii string data";
+  int numargs=0;
+  Callin_char_t *routinename="";
+  Callin_char_t *entryname="";
+  
+  printf("========= Calling callin_function_call1\n");
+  // Set tSC=Entry1a^TestRoutine(str,int) 
+  // Function spec
+  //   Accept two params: string and integer
+  //   Return integer 
+  //
+  routinename="TestRoutine";
+  entryname="Entry1a";
+  numargs=0;
+  rc = IRISPUSHFUNC(&rtnflags, strlen(entryname), entryname, strlen(routinename), routinename); 
+  printf("IRISPUSHRTN rc:%d\n",rc);
+
+  rc = IRISPUSHSTR(strlen(str), str);
+  RETURNIFERROR(rc)
+  numargs++;
+
+  rc = IRISPUSHINT(100);
+  printf("IRISPUSHINT rc:%d\n",rc);
+  RETURNIFERROR(rc)
+  numargs++;
+
+  rc = IRISEXTFUN(rtnflags,numargs);
+  printf("IRISEXTFUN rc:%d\n",rc);
+  RETURNIFERROR(rc)
+
+  long long retval;
+  rc = IRISPOPINT64(&retval);
+  printf("IRISPOPINT rc:%d\n",rc);
+  printf("return value as INT64 :%lld\n",retval);
 
   return 0;
 }
@@ -86,12 +126,12 @@ int callin_function_call2()
   int numargs=0;
   
   printf("========= Calling callin_function_call2\n");
-  // Set tSC=Entry3^TestRoutine(str) 
+  // Set tSC=Entry2^TestRoutine(str) 
   // Function spec
   //   Accept one params: string
   //   Return: ascii string  
   numargs=0;
-  rc = IRISPUSHFUNC(&rtnflags, strlen("Entry3"), "Entry3", strlen("TestRoutine"), "TestRoutine"); 
+  rc = IRISPUSHFUNC(&rtnflags, strlen("Entry2"), "Entry2", strlen("TestRoutine"), "TestRoutine"); 
   printf("IRISPUSHRTN rc:%d\n",rc);
 
   rc = IRISPUSHSTR(strlen(str), str);
@@ -102,17 +142,16 @@ int callin_function_call2()
   printf("IRISEXTFUN rc:%d\n",rc);
   RETURNIFERROR(rc)
 
-  char returnval[101];
-  IRIS_ASTR retval;
+  int len;
+  Callin_char_t *val="";
 
-  retval.len = 100;
-  rc = IRISCONVERT(IRIS_STRING,&retval);
-  printf("IRISCONVERT rc:%d\n",rc);
-  RETURNIFERROR(rc)
-  memcpy(returnval,retval.str,retval.len);
-  returnval[retval.len] = '\0';
-
-  printf("return value as STRING :%s\n",returnval);
+  rc = IRISPOPSTR(&len, &val);
+  printf("IRISPOPSTR rc:%d\n",rc);
+  if (rc==IRIS_SUCCESS) {
+    printf("len:%d\n", len);
+    val[len] = '\0';  // is this required?
+  }
+  printf("return value as STRING :%s\n",val);
 
   return 0;
 }
@@ -235,9 +274,9 @@ int callin_classmethod_call2()
   RETURNIFERROR(rc)
 
   int retval;
-  rc = IRISCONVERT(IRIS_INT4,&retval);
-  printf("IRISCONVERT rc:%d\n",rc);
-  RETURNIFERROR(rc)
+  rc = IRISPOPINT(&retval);
+  printf("IRISPOPINT rc:%d\n",rc);
+  
   printf("return value as INT4 :%d\n",retval);
 
   return 0;
@@ -268,20 +307,17 @@ int callin_classmethod_call3()
   rc = IRISINVOKECLASSMETHOD(numargs);
   printf("IRISINVOKECLASSMETHOD rc:%d\n",rc);
   RETURNIFERROR(rc)
+  
+  int len;
+  Callin_char_t *val="";
 
-#define ASCII_DATA_SIZE 100
-  unsigned char returnval[ASCII_DATA_SIZE+1];
-
-  IRIS_ASTR retval;
-
-  retval.len = 100;
-  rc = IRISCONVERT(IRIS_STRING,&retval);
-  printf("IRISCONVERT rc:%d\n",rc);
-  RETURNIFERROR(rc)
-  memcpy(returnval,retval.str,retval.len);
-  returnval[retval.len] = '\0';
-  printf("return value as STRING :%s\n",returnval);
-
+  rc = IRISPOPSTR(&len, &val);
+  printf("IRISPOPSTR rc:%d\n",rc);
+  if (rc==IRIS_SUCCESS) {
+    printf("len:%d\n", len);
+    val[len] = '\0';  // is this required?
+  }
+  printf("return value as STRING :%s\n",val);
   return 0;
 }
 

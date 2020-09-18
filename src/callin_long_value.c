@@ -78,8 +78,8 @@ int main(int argc, char * argv[])
 #endif
 
   for (int i=0; i<repeatcount; i++) {
-      callin_classmethod_call4();
-//      callin_classmethod_call3();
+//      callin_classmethod_call4();
+      callin_classmethod_call3();
 #ifdef __linux__
       if (getrusage(RUSAGE_SELF, &r) != 0) {
         printf("getrusage() error.\n");
@@ -145,6 +145,15 @@ int callin_classmethod_call4()
 
   IRIS_EXSTR longval;
 
+  rc = IRISPOPEXSTR(&longval);
+  printf("IRISPOPEXSTR rc:%d\n",rc);
+  if (rc==IRIS_SUCCESS) {
+    printf("len:%d\n",longval.len);
+  }
+
+/*
+  IRIS_EXSTR longval;
+
   rc = IRISCONVERT(IRIS_LASTRING,&longval);
   printf("IRISCONVERT rc:%d\n",rc);
   RETURNIFERROR(rc)
@@ -161,7 +170,7 @@ int callin_classmethod_call4()
 
   printf("size of return value %ld\n",(long)strlen(data_ascii_long));
   printf("return value as STRING :%.50s....\n",data_ascii_long);
-
+*/
   return 0;
 }
 
@@ -211,18 +220,17 @@ int callin_classmethod_call3()
       printf("%d\n",type);
   }
 
-#define ASCII_DATA_SIZE 100
-  unsigned char returnval[ASCII_DATA_SIZE+1];
+  int len;
+  Callin_char_t *val="";
 
-  IRIS_ASTR retval;
-
-  retval.len = 100;
-  rc = IRISCONVERT(IRIS_STRING,&retval);
-  printf("IRISCONVERT rc:%d\n",rc);
-  RETURNIFERROR(rc)
-  memcpy(returnval,retval.str,retval.len);
-  returnval[retval.len] = '\0';
-  printf("return value as STRING :%s\n",returnval);
+  rc = IRISPOPSTR(&len, &val);
+  printf("IRISPOPSTR rc:%d\n",rc);
+  if (rc==IRIS_SUCCESS) {
+    printf("len:%d\n", len);
+    val[len] = '\0';  // is this required?
+    printf("value:%s\n",val);
+  }
+  printf("return value as STRING :%s\n",val);
 
   return 0;
 }

@@ -6,12 +6,15 @@ Entry() public  {
 	Quit
 }
 
-Entry2(str,int) public  {
+Entry1(str,int) public  {
 	Set ^calltest(2)=$ZDATETIME($H)_";"_str_";"_int
 	Quit 123
 }
-
-Entry3(str) public  {
+Entry1a(str,int) public  {
+	Set ^calltest(2)=$ZDATETIME($H)_";"_str_";"_int
+	Quit 2**62  ;4611686018427387904
+}
+Entry2(str) public  {
 	Set ^calltest(3)=$ZDATETIME($H)_";"_str
 	Quit "abcdefg"
 }
