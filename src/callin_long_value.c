@@ -143,12 +143,12 @@ int callin_classmethod_call4()
       printf("%d\n",type);
   }
 
-#define USECONVERT
+//#define USECONVERT
 
   IRIS_EXSTR longval;
 #ifndef USECONVERT
   rc = IRISPOPEXSTR(&longval);
-  // IRISPOPEXSTR rc:-14... /* an output EXSTR must be null */
+  // IRISPOPEXSTR returns rc:-14... IRIS_EXSTR_INUSE /* an output EXSTR must be null */
   printf("IRISPOPEXSTR rc:%d\n",rc);
   if (rc==IRIS_SUCCESS) {
     printf("len:%d\n",longval.len);
