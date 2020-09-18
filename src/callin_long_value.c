@@ -78,8 +78,8 @@ int main(int argc, char * argv[])
 #endif
 
   for (int i=0; i<repeatcount; i++) {
-//      callin_classmethod_call4();
-      callin_classmethod_call3();
+      callin_classmethod_call4();
+//      callin_classmethod_call3();
 #ifdef __linux__
       if (getrusage(RUSAGE_SELF, &r) != 0) {
         printf("getrusage() error.\n");
@@ -143,17 +143,17 @@ int callin_classmethod_call4()
       printf("%d\n",type);
   }
 
-  IRIS_EXSTR longval;
+#define USECONVERT
 
+  IRIS_EXSTR longval;
+#ifndef USECONVERT
   rc = IRISPOPEXSTR(&longval);
+  // IRISPOPEXSTR rc:-14... /* an output EXSTR must be null */
   printf("IRISPOPEXSTR rc:%d\n",rc);
   if (rc==IRIS_SUCCESS) {
     printf("len:%d\n",longval.len);
   }
-
-/*
-  IRIS_EXSTR longval;
-
+#else
   rc = IRISCONVERT(IRIS_LASTRING,&longval);
   printf("IRISCONVERT rc:%d\n",rc);
   RETURNIFERROR(rc)
@@ -170,7 +170,7 @@ int callin_classmethod_call4()
 
   printf("size of return value %ld\n",(long)strlen(data_ascii_long));
   printf("return value as STRING :%.50s....\n",data_ascii_long);
-*/
+#endif
   return 0;
 }
 
