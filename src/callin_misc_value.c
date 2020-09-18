@@ -74,7 +74,7 @@ int callin_value_long_ascii()
     return -1;
   }
   memcpy(c,data_ascii_long,strlen(data_ascii_long));
-  longval.len=strlen(data_ascii_long);
+  longval.len=(unsigned int)strlen(data_ascii_long);
 
   rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
   printf("IRISPUSHGLOBAL rc:%d\n",rc);
