@@ -270,7 +270,6 @@ int callin_classmethod_call3()
   RETURNIFERROR(rc)
 
 #define ASCII_DATA_SIZE 100
-  unsigned char *c;
   unsigned char returnval[ASCII_DATA_SIZE+1];
 
   IRIS_ASTR retval;
@@ -339,7 +338,7 @@ int callin_classmethod_call4()
   printf("IRISEXSTRKILL rc:%d\n",rc);
   RETURNIFERROR(rc)
 
-  printf("size of return value %ld\n",strlen(data_ascii_long));
+  printf("size of return value %ld\n",(long)strlen(data_ascii_long));
   printf("return value as STRING :%.50s....\n",data_ascii_long);
 #ifdef USEMALLOC
   free(data_ascii_long);

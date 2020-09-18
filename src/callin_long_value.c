@@ -70,6 +70,8 @@ int main(int argc, char * argv[])
     IRISEND(); 
     exit(EXIT_FAILURE);
   }
+  printf("hit any key to start.\n");
+  getchar();  
 
 #ifdef __linux__
 	struct rusage r;
@@ -85,6 +87,9 @@ int main(int argc, char * argv[])
       printf("maxrss=%ld\n", r.ru_maxrss);
 #endif
   }
+
+  printf("hit any key to end.\n");
+  getchar();  
 
   IRISEND();
 
@@ -134,7 +139,7 @@ int callin_classmethod()
     case IRIS_LWSTRING:
       printf("IRIS_LWSTRING\n");
       break;
-    defaut:
+    default:
       printf("%d\n",type);
   }
 
@@ -154,7 +159,7 @@ int callin_classmethod()
   printf("IRISEXSTRKILL rc:%d\n",rc);
   RETURNIFERROR(rc)
 
-  printf("size of return value %ld\n",strlen(data_ascii_long));
+  printf("size of return value %ld\n",(long)strlen(data_ascii_long));
   printf("return value as STRING :%.50s....\n",data_ascii_long);
 
   return 0;
@@ -202,12 +207,11 @@ int callin_classmethod_call3()
     case IRIS_LWSTRING:
       printf("IRIS_LWSTRING\n");
       break;
-    defaut:
+    default:
       printf("%d\n",type);
   }
 
 #define ASCII_DATA_SIZE 100
-  unsigned char *c;
   unsigned char returnval[ASCII_DATA_SIZE+1];
 
   IRIS_ASTR retval;
