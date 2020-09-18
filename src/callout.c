@@ -67,14 +67,14 @@ int callRoutine() {
    if (rc!=IRIS_SUCCESS) { return -1; }
 
    char returnval[101];
-   IRIS_ASTR retval;
+   int len;
+   Callin_char_t *val="";
 
-   retval.len = 100;
-   rc = IRISCONVERT(IRIS_STRING,&retval);
+   rc = IRISPOPSTR(&len, &val);
    if (rc!=IRIS_SUCCESS) { return -1; }
 
-   memcpy(returnval,retval.str,retval.len);
-   returnval[retval.len] = '\0';
+   memcpy(returnval,val,len);
+   returnval[len] = '\0';
 
    // not a good idea to printf() here...
    printf("return value as STRING :%s\n",returnval);

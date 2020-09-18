@@ -1,3 +1,6 @@
+/*
+ *  This is a test code which uses IRIS_EXSTR as returing value from classmethod call.
+ */
 #pragma warning(disable : 4996)
 #include "iris-callin.h"
 #include "mycallin.h"
@@ -143,34 +146,22 @@ int callin_classmethod_call4()
       printf("%d\n",type);
   }
 
-//#define USECONVERT
 
   IRIS_EXSTR longval;
-#ifndef USECONVERT
+  longval.len=0;
+  longval.str.ch = NULL;
+
   rc = IRISPOPEXSTR(&longval);
   // IRISPOPEXSTR returns rc:-14... IRIS_EXSTR_INUSE /* an output EXSTR must be null */
   printf("IRISPOPEXSTR rc:%d\n",rc);
-  if (rc==IRIS_SUCCESS) {
-    printf("len:%d\n",longval.len);
-  }
-#else
-  rc = IRISCONVERT(IRIS_LASTRING,&longval);
-  printf("IRISCONVERT rc:%d\n",rc);
   RETURNIFERROR(rc)
-
-  printf("longval.len:%d\n",longval.len);
-  printf("longval.str.ch %p\n",longval.str.ch);
-
-  memcpy(data_ascii_long,longval.str.ch,longval.len+1);
-  data_ascii_long[longval.len] = '\0';
+  printf("len:%d\n",longval.len);
+  printf("return value as STRING :%.50s....\n",longval.str.ch);
 
   rc=IRISEXSTRKILL(&longval); // Releases the storage associated with it.  
   printf("IRISEXSTRKILL rc:%d\n",rc);
   RETURNIFERROR(rc)
 
-  printf("size of return value %ld\n",(long)strlen(data_ascii_long));
-  printf("return value as STRING :%.50s....\n",data_ascii_long);
-#endif
   return 0;
 }
 

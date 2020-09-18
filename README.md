@@ -11,6 +11,16 @@ Verified under
 IRIS for Windows (x86-64) 2020.1 (Build 215U) Mon Mar 30 2020 20:14:33 EDT  
 IRIS for UNIX (Ubuntu Server LTS for x86-64) 2020.1 (Build 215U) Mon Mar 30 2020 20:25:33 EDT  
 
+This sample involves unicode handling (primarily for Japanese but should work against any).  
+If it matters, please change following parts in Dockerfile, to meet your environment.
+  
+```
+RUN echo 'export LANG=ja_JP.UTF-8' >> ~/.bashrc && echo 'export LANGUAGE="ja_JP:ja"' >> ~/.bashrc \
+```
+```
+ && printf 'Do ##class(Config.NLS.Locales).Install("jpuw") h\n' | iris session $ISC_PACKAGE_INSTANCENAME -U %SYS \
+```
+
 # How to RUN
 
 ## Start IRIS on Docker(Ubuntu)
@@ -23,7 +33,7 @@ user@host:~/iris-c-language$ docker-compose exec iris bash
 irisowner@ec21549f2063:~$
 ```
 If you change c source code, you need to rebuild an image to reflect the changes.  
-(because I'm avoiding the use of volume binding to stay away from annoying errors on docker for windows...)
+(because I wanted to compile c source codes during container image build time)
 ```bash
 user@host:~/iris-c-language$ docker-compose build
 ```
@@ -34,16 +44,16 @@ irisowner@ec21549f2063:~$ cd src
 irisowner@ec21549f2063:~$ make
 ```
 
-
 ## On Windows
 See the last section.
 
 ## Various functions and various data (Unicode, Long Ascii String, Long Unicode String) handling.
 ```bash
-irisowner@ec21549f2063:~$ cd src
-irisowner@c91e96487245:~/src$ ./callin_misc
+irisowner@9618c833d390:~$ cd src
+irisowner@9618c833d390:~/src$ ./callin_misc
 IRISSETDIR rc:0
 IRISSECURESTART Status :Success. 0
+maxrss=8832
 ========= Calling callin_routine_call
 IRISPUSHRTN rc:0
 IRISDORTN rc:0
@@ -51,12 +61,19 @@ IRISDORTN rc:0
 IRISPUSHRTN rc:0
 IRISPUSHINT rc:0
 IRISEXTFUN rc:0
-IRISCONVERT rc:0
+IRISPOPINT rc:0
 return value as INT4 :123
+========= Calling callin_function_call1a
+IRISPUSHRTN rc:0
+IRISPUSHINT rc:0
+IRISEXTFUN rc:0
+IRISPOPINT rc:0
+return value as INT64 :4611686018427387904
 ========= Calling callin_function_call2
 IRISPUSHRTN rc:0
 IRISEXTFUN rc:0
-IRISCONVERT rc:0
+IRISPOPSTR rc:0
+len:7
 return value as STRING :abcdefg
 ========= Calling callin_routine_geterrorinfo
 IRISPUSHRTN rc:0
@@ -72,33 +89,33 @@ IRISINVOKECLASSMETHOD rc:0
 IRISPUSHCLASSMETHOD rc:0
 IRISPUSHINT rc:0
 IRISINVOKECLASSMETHOD rc:0
-IRISCONVERT rc:0
+IRISPOPINT rc:0
 return value as INT4 :456
 ========= Calling callin_classmethod_call3
 IRISPUSHCLASSMETHOD rc:0
 IRISINVOKECLASSMETHOD rc:0
-IRISCONVERT rc:0
+IRISPOPSTR rc:0
+len:3
 return value as STRING :ABC
 ========= Calling callin_classmethod_call4
 IRISPUSHCLASSMETHOD rc:0
 IRISINVOKECLASSMETHOD rc:0
-IRISCONVERT rc:0
-longval.len:1000000
-IRISEXSTRKILL rc:0
-size of return value 1000000
+IRISPOPEXSTR rc:0
+len:1000000
 return value as STRING :AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA....
+IRISEXSTRKILL rc:0
 ========= Calling callin_globals_set_and_get
 IRISPUSHGLOBAL rc:0
 IRISGLOBALGET rc:0
 IRISPOPSTR rc:0
-len:44
-value:06/11/2020 12:10:04;my ascii string data;100
+len:3
+value:abc
 IRISPUSHGLOBAL rc:0
-IRISPUSHSTR rc:0
+IRISPUSHINT rc:0
 IRISGLOBALGET rc:0
 IRISPOPSTR rc:0
-len:2
-value:bb
+len:5
+value:12345
 ========= Calling callin_execute
 ========= Setting Unicode Value.
 locale ja_JP.UTF-8.
@@ -121,21 +138,22 @@ IRISPUSHINT rc:0
 IRISPUSHEXSTRH rc:0
 IRISGLOBALSET rc:0
 IRISEXSTRKILL rc:0
+maxrss=21324
 Exiting.
-irisowner@ec21549f2063:~/src$
-irisowner@ec21549f2063:~/src$ iris session iris -U demo
-ノード: ec21549f2063 インスタンス: IRIS
+irisowner@9618c833d390:~/src$
+irisowner@9618c833d390:~/src$ iris session iris -U demo
+ノード: 9618c833d390 インスタンス: IRIS
 ```
 ```ObjectScript
 DEMO>zw ^test
 ^test="abc"
 ^test(1)=12345
-^test("MyClassMethod1")="06/11/2020 12:10:04"
-^test("MyClassMethod2")="06/11/2020 12:10:04;my ascii string data;100"
-^test("MyClassMethod3")="06/11/2020 12:10:04;my ascii string data"
-^test("MyClassMethod4",1)="06/11/2020 12:10:04"
+^test("MyClassMethod1")="09/18/2020 16:22:57"
+^test("MyClassMethod2")="09/18/2020 16:22:57;my ascii string data;100"
+^test("MyClassMethod3")="09/18/2020 16:22:57;my ascii string data"
+^test("MyClassMethod4",1)="09/18/2020 16:22:57"
 ^test("MyClassMethod4",2)="my ascii string data"
-DEMO>
+
 DEMO>zw ^test2
 ^test2(1)="abc"
 ^test2(2)="abc"
@@ -147,27 +165,25 @@ DEMO>zw ^test2
 ^test2(8)="abc"
 ^test2(9)="abc"
 ^test2(10)="abc"
-DEMO>
+
 DEMO>zw ^calltest
-^calltest(1)="06/11/2020 17:38:49"
-^calltest(2)="06/11/2020 17:38:49;my ascii string data;100"
-^calltest(3)="06/11/2020 17:38:49;my ascii string data"
-DEMO>
+^calltest(1)="09/18/2020 16:22:57"
+^calltest(2)="09/18/2020 16:22:57;my ascii string data;100"
+^calltest(3)="09/18/2020 16:22:57;my ascii string data"
+
 DEMO>zw ^execute
 ^execute=1
-^execute(1)="06/11/2020 12:10:04/566"
-DEMO>
+^execute(1)="09/18/2020 16:22:57/572"
+
 DEMO>zw ^unicode
 ^unicode(1)="あいうえお"
+
 DEMO>w $L(^long(1))
 1000000
-DEMO>
 DEMO>w $E(^long(1),$L(^long(1))-10,*)
 AAAAAAAAAAA
-DEMO>
 DEMO>w $L(^long(2))
 1000000
-DEMO>
 DEMO>w $E(^long(2),$L(^long(2))-10,*)
 あああああああああああ
 DEMO>h

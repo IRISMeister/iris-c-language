@@ -4,15 +4,20 @@
 #include <stdio.h>
 #include <string.h>
 
-int addTwoIntegers(int a, int b, int*outsum) {
+int addTwoIntegers(int a, int b, int *outsum) {
    *outsum = a+b;   /* set value to be returned by the $ZF function call */
-   return 0;   /* set the exit status code */
+   return ZF_SUCCESS;   /* set the exit status code */
 }
 
-int addTwoIntegersAndSave(int a, int b, int*outsum) {
+int addTwoBigIntegers(char *a, char *b, char *outsum) {
+   long long val=atoll(a)+atoll(b);
+   sprintf(outsum,"%lld",val);
+   return ZF_SUCCESS;   /* set the exit status code */
+}
+
+int addTwoIntegersAndSave(int a, int b, int *outsum) {
    int	rc = 0;
    Callin_char_t *gloref="callout";
-   Callin_char_t p[100];
 
    *outsum = a+b;   /* set value to be returned by the $ZF function call */
    rc = CACHEPUSHGLOBAL(strlen((const char *)gloref), gloref);
@@ -23,7 +28,7 @@ int addTwoIntegersAndSave(int a, int b, int*outsum) {
       return -1;
    }
 
-   return 0;   /* set the exit status code */
+   return ZF_SUCCESS;   /* set the exit status code */
 }
 int waitIRISEvent() {
    int rc;
@@ -36,7 +41,7 @@ int waitIRISEvent() {
       return -1;
    }
 
-   return 0;   /* set the exit status code */
+   return ZF_SUCCESS;   /* set the exit status code */
 }
 
 /*
@@ -61,23 +66,24 @@ int callRoutine() {
    if (rc!=CACHE_SUCCESS) { return -1; }
 
    char returnval[101];
-   CACHE_ASTR retval;
+   int len;
+   Callin_char_t *val="";
 
-   retval.len = 100;
-   rc = CACHECONVERT(CACHE_STRING,&retval);
+   rc = CACHEPOPSTR(&len, &val);
    if (rc!=CACHE_SUCCESS) { return -1; }
 
-   memcpy(returnval,retval.str,retval.len);
-   returnval[retval.len] = '\0';
+   memcpy(returnval,val,len);
+   returnval[len] = '\0';
 
    // not a good idea to printf() here...
    printf("return value as STRING :%s\n",returnval);
 
-   return 0;   /* set the exit status code */
+   return ZF_SUCCESS;   /* set the exit status code */
 }
 
 ZFBEGIN
    ZFENTRY("AddInt","iiP",addTwoIntegers)
+   ZFENTRY("AddBigInt","ccC",addTwoBigIntegers)
    ZFENTRY("AddIntSave","iiP",addTwoIntegersAndSave)
    ZFENTRY("WaitIRISEvent","",waitIRISEvent)
    ZFENTRY("CallRoutine","",callRoutine)

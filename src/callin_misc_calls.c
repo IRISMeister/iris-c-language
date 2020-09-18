@@ -147,10 +147,9 @@ int callin_function_call2()
 
   rc = IRISPOPSTR(&len, &val);
   printf("IRISPOPSTR rc:%d\n",rc);
-  if (rc==IRIS_SUCCESS) {
-    printf("len:%d\n", len);
-    val[len] = '\0';  // is this required?
-  }
+  RETURNIFERROR(rc)
+
+  printf("len:%d\n", len);
   printf("return value as STRING :%s\n",val);
 
   return 0;
@@ -313,10 +312,9 @@ int callin_classmethod_call3()
 
   rc = IRISPOPSTR(&len, &val);
   printf("IRISPOPSTR rc:%d\n",rc);
-  if (rc==IRIS_SUCCESS) {
-    printf("len:%d\n", len);
-    val[len] = '\0';  // is this required?
-  }
+  RETURNIFERROR(rc)
+
+  printf("len:%d\n", len);
   printf("return value as STRING :%s\n",val);
   return 0;
 }
@@ -348,37 +346,21 @@ int callin_classmethod_call4()
   RETURNIFERROR(rc)
 
   IRIS_EXSTR longval;
+  longval.len=0;
+  longval.str.ch = NULL;
 
-  rc = IRISCONVERT(IRIS_LASTRING,&longval);
-  printf("IRISCONVERT rc:%d\n",rc);
-  RETURNIFERROR(rc)
-
-  printf("longval.len:%d\n",longval.len);
-  printf("longval.str.ch %p\n",longval.str.ch);
-
-  // Allocate user data area
-#ifdef USEMALLOC
-  char *data_ascii_long;
-  data_ascii_long = (char *)malloc(longval.len+1);
-  if(data_ascii_long == NULL) {
-    printf("malloc failed.\n");
-    rc=IRISEXSTRKILL(&longval); // Releases the storage associated with it.  
-    printf("IRISEXSTRKILL rc:%d\n",rc);
+  rc = IRISPOPEXSTR(&longval);
+  printf("IRISPOPEXSTR rc:%d\n",rc);
+  if (rc) {
+    IRISEXSTRKILL(&longval); // may fail
     return -1;
   }
-#endif
-  memcpy(data_ascii_long,longval.str.ch,longval.len+1);
-  data_ascii_long[longval.len] = '\0';
+  printf("len:%d\n",longval.len);
+  printf("return value as STRING :%.50s....\n",longval.str.ch);
 
   rc=IRISEXSTRKILL(&longval); // Releases the storage associated with it.  
   printf("IRISEXSTRKILL rc:%d\n",rc);
   RETURNIFERROR(rc)
-
-  printf("size of return value %ld\n",(long)strlen(data_ascii_long));
-  printf("return value as STRING :%.50s....\n",data_ascii_long);
-#ifdef USEMALLOC
-  free(data_ascii_long);
-#endif
 
   return 0;
 }
@@ -408,11 +390,10 @@ int callin_globals_set_and_get()
 
   rc = IRISPOPSTR(&len, &val);
   printf("IRISPOPSTR rc:%d\n",rc);
-  if (rc==IRIS_SUCCESS) {
-    printf("len:%d\n", len);
-    val[len] = '\0';  // is this required?
-    printf("value:%s\n",val);
-  }
+  RETURNIFERROR(rc)
+
+  printf("len:%d\n", len);
+  printf("value:%s\n",val);
 
   /* Get value */
   gloref="test";
@@ -431,11 +412,10 @@ int callin_globals_set_and_get()
 
   rc = IRISPOPSTR(&len, &val);
   printf("IRISPOPSTR rc:%d\n",rc);
-  if (rc==IRIS_SUCCESS) {
-    printf("len:%d\n", len);
-    val[len] = '\0';  // is this required?
-    printf("value:%s\n",val);
-  }
+  RETURNIFERROR(rc)
+
+  printf("len:%d\n", len);
+  printf("value:%s\n",val);
 
   /* Set value ; Equivalent of For i=1:1:10 { Set ^test2(i)="abc"} */
   gloref="test2";
