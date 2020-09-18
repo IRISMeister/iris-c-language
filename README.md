@@ -295,7 +295,13 @@ C:\temp\iris-c-language\src>Set Path=C:\InterSystems\IRIS\bin;%Path%
 C:\temp\iris-c-language\src>x64\callin_misc.exe
 C:\temp\iris-c-language\src>x64\callin_multithreads.exe
 ```
-If you get C4819 error while compiling callin_misc_value.c,  make sure it is saved as UTF8 with BOM.
+If you get C4819 error while compiling callin_misc_value.c,  make sure it is saved as UTF8 with BOM.  
+Windows may fail to run "Setting long ascii String" part and "Setting long Unicode String" part because it fails to allocate large auto variable in this way.   Making array size smaller ot rewriting them to use malloc() will probably do.
+```c
+#define ASCII_LONG_DATA_SIZE 1000000
+  unsigned char data_ascii_long[ASCII_LONG_DATA_SIZE+1];
+
+```
 
 ## From Cache' to IRIS
 [makefile-cache.mak](src/makefile-cache.mak), [callin_multithreads-cache.c](src/callin_multithreads-cache.c), [callout-cache.c](src/callout-cache.c) are for Cache' build.  
