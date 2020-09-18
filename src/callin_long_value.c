@@ -70,8 +70,8 @@ int main(int argc, char * argv[])
     IRISEND(); 
     exit(EXIT_FAILURE);
   }
-  printf("hit any key to start.\n");
-  getchar();  
+  //printf("hit any key to start.\n");
+  //getchar();  
 
 #ifdef __linux__
 	struct rusage r;
@@ -88,8 +88,8 @@ int main(int argc, char * argv[])
 #endif
   }
 
-  printf("hit any key to end.\n");
-  getchar();  
+  //printf("hit any key to end.\n");
+  //getchar();  
 
   IRISEND();
 
