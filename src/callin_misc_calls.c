@@ -307,6 +307,25 @@ int callin_classmethod_call3()
   printf("IRISINVOKECLASSMETHOD rc:%d\n",rc);
   RETURNIFERROR(rc)
   
+  int type = IRISTYPE();
+  printf("IRISTYPE type:");
+  switch(type){
+    case IRIS_ASTRING:
+      printf("IRIS_ASTRING\n");
+      break;
+    case IRIS_WSTRING:
+      printf("IRIS_WSTRING\n");
+      break;
+    case IRIS_LASTRING: 
+      printf("IRIS_LASTRING\n");
+      break;
+    case IRIS_LWSTRING:
+      printf("IRIS_LWSTRING\n");
+      break;
+    default:
+      printf("%d\n",type);
+  }
+
   int len;
   Callin_char_t *val="";
 
@@ -344,6 +363,25 @@ int callin_classmethod_call4()
   rc = IRISINVOKECLASSMETHOD(numargs);
   printf("IRISINVOKECLASSMETHOD rc:%d\n",rc);
   RETURNIFERROR(rc)
+
+  int type = IRISTYPE();
+  printf("IRISTYPE type:");
+  switch(type){
+    case IRIS_ASTRING:
+      printf("IRIS_ASTRING\n");
+      break;
+    case IRIS_WSTRING:
+      printf("IRIS_WSTRING\n");
+      break;
+    case IRIS_LASTRING: 
+      printf("IRIS_LASTRING\n");
+      break;
+    case IRIS_LWSTRING:
+      printf("IRIS_LWSTRING\n");
+      break;
+    default:
+      printf("%d\n",type);
+  }
 
   IRIS_EXSTR longval;
   longval.len=0;
