@@ -36,17 +36,11 @@ LINK_DLL_FLAGS=\
 MT_OBJS=\
         $(OUTDIR)\callin_multithreads-cache.obj $(OUTDIR)\shdir-cache.obj
 
-MISC_OBJS=\
-        $(OUTDIR)\callin_execute.obj $(OUTDIR)\callin_misc.obj $(OUTDIR)\callin_misc_calls.obj $(OUTDIR)\callin_misc_value.obj $(OUTDIR)\shdir-cache.obj
-
 DLL_OBJS=\
         $(OUTDIR)\callout-cache.obj
 
 $(OUTDIR)\callin_multithreads-cache.exe : $(MT_OBJS)
         $(LINK) $(LINK_FLAGS) /pdb:$(OUTDIR)\callin_multithreads-cache.pdb /out:$(OUTDIR)\callin_multithreads-cache.exe $(MT_OBJS)
-
-$(OUTDIR)\callin_misc.exe : $(MISC_OBJS)
-        $(LINK) $(LINK_FLAGS) /pdb:$(OUTDIR)\callin_misc.pdb /out:$(OUTDIR)\callin_misc.exe $(MISC_OBJS)
 
 $(OUTDIR)\callout-cache.dll : $(DLL_OBJS)
         $(LINK) $(LINK_DLL_FLAGS) /pdb:$(OUTDIR)\callout-cache.pdb /out:$(OUTDIR)\callout-cache.dll $(DLL_OBJS)

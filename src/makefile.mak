@@ -40,7 +40,7 @@ MISC_OBJS=\
         $(OUTDIR)\callin_execute.obj $(OUTDIR)\callin_misc.obj $(OUTDIR)\callin_misc_calls.obj $(OUTDIR)\callin_misc_value.obj $(OUTDIR)\shdir.obj
 
 LONG_VAL_OBJS=\
-        $(OUTDIR)\callin_long_value.obj $(OUTDIR)\shdir.obj
+        $(OUTDIR)\callin_long_value.obj $(OUTDIR)\callin_misc_calls.obj $(OUTDIR)\shdir.obj
 
 DLL_OBJS=\
         $(OUTDIR)\callout.obj
