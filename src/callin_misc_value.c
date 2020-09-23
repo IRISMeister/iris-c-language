@@ -58,11 +58,16 @@ int callin_value_long_ascii()
   Callin_char_t *gloref="long";
   IRIS_EXSTR longval;
   unsigned char *c;
-  unsigned char data_ascii_long[ASCII_LONG_DATA_SIZE+1];
 
   printf("========= Setting long ascii String.\n");
   // partial hint https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=BGCL_library#BGCL_library_linkages
   // [Using J linkages to pass strings] section
+
+  unsigned char *data_ascii_long = (char *)malloc(ASCII_LONG_DATA_SIZE+1);
+  if(data_ascii_long == NULL) {
+    printf("malloc failed.\n");
+    return -1;
+  }
 
   memset(data_ascii_long, 'A', ASCII_LONG_DATA_SIZE);
   data_ascii_long[ASCII_LONG_DATA_SIZE]='\0';
@@ -75,6 +80,8 @@ int callin_value_long_ascii()
   }
   memcpy(c,data_ascii_long,strlen(data_ascii_long));
   longval.len=(unsigned int)strlen(data_ascii_long);
+
+  free(data_ascii_long);
 
   rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
   printf("IRISPUSHGLOBAL rc:%d\n",rc);
@@ -110,28 +117,35 @@ int callin_value_long_ascii()
   Callin_char_t *gloref="long";
   IRIS_EXSTR longval;
   wchar_t *c;
-  //wchar_t data_long_uni[] = L"あいうえお";
-  wchar_t data_long_uni[UNICODE_LONG_DATA_SIZE+1];
+  //wchar_t data_unicode_long[] = L"あいうえお";
 
   printf("========= Setting long Unicode String.\n");
 
-  wmemset(data_long_uni, L'あ', UNICODE_LONG_DATA_SIZE);
-  data_long_uni[UNICODE_LONG_DATA_SIZE]=0;
+  wchar_t *data_unicode_long = (wchar_t *)malloc((UNICODE_LONG_DATA_SIZE+1) * sizeof(wchar_t));
+  if(data_unicode_long == NULL) {
+    printf("malloc failed.\n");
+    return -1;
+  }
 
-  printf("wcslen %zd\n",wcslen(data_long_uni));
+  wmemset(data_unicode_long, L'あ', UNICODE_LONG_DATA_SIZE);
+  data_unicode_long[UNICODE_LONG_DATA_SIZE]=0;
+
+  printf("wcslen %zd\n",wcslen(data_unicode_long));
 
   // max size: IRIS_MAXLOSTSZ
 #ifdef __linux__
-  c=IRISEXSTRNEWH(&longval,wcslen(data_long_uni));
+  c=IRISEXSTRNEWH(&longval,wcslen(data_unicode_long));
 #else
-  c=IRISEXSTRNEWW(&longval,wcslen(data_long_uni));
+  c=IRISEXSTRNEWW(&longval,wcslen(data_unicode_long));
 #endif
   if (!c) {
     printf("IRISEXSTRNEWx failed.\n");
     return -1;
   }
-  wmemcpy(c,data_long_uni,wcslen(data_long_uni));
-  longval.len=(unsigned int)wcslen(data_long_uni);
+  wmemcpy(c,data_unicode_long,wcslen(data_unicode_long));
+  longval.len=(unsigned int)wcslen(data_unicode_long);
+
+  free(data_unicode_long);
 
   rc = IRISPUSHGLOBAL(strlen((const char *)gloref), gloref);
   printf("IRISPUSHGLOBAL rc:%d\n",rc);
