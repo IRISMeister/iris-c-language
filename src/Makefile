@@ -9,10 +9,10 @@ PROGRAM       = callin_repeat callin_misc callin_multithreads callout.so
 all:            $(PROGRAM)
 
 callin_repeat:	callin_repeat.o callin_misc_calls.o shdir.o
-	$(CC) callin_repeat.o callin_misc_calls.o shdir.o $(LDFLAGS) $(LIBS) -o callin_repeat
+	$(CC) callin_repeat.o callin_misc_calls.o shdir.o $(LDFLAGS) $(LIBSMT) -o callin_repeat
 
 callin_misc:	callin_misc.o callin_misc_calls.o callin_execute.o callin_misc_value.o shdir.o
-	$(CC) callin_misc.o callin_misc_calls.o callin_execute.o callin_misc_value.o shdir.o $(LDFLAGS) $(LIBS) -o callin_misc
+	$(CC) callin_misc.o callin_misc_calls.o callin_execute.o callin_misc_value.o shdir.o $(LDFLAGS) $(LIBSMT) -o callin_misc
 
 callin_multithreads:	callin_multithreads.o shdir.o
 	$(CC) callin_multithreads.o shdir.o $(LDFLAGS) $(LIBSMT) -pthread -o callin_multithreads
