@@ -5,12 +5,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define ASCII_LONG_DATA_SIZE 1000000
-#define USEMALLOC
-#ifndef USEMALLOC
-  char data_ascii_long[ASCII_LONG_DATA_SIZE+1];
-#endif
-
 int callin_routine_call()
 {
   int	rc= 0;

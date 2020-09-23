@@ -15,9 +15,6 @@
 #endif
 extern char *shdir;
 
-#define ASCII_LONG_DATA_SIZE 1000000
-char data_ascii_long[ASCII_LONG_DATA_SIZE+1];
-
 int main(int argc, char * argv[])
 {
 
