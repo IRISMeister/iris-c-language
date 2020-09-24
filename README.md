@@ -32,20 +32,21 @@ user@host:~/iris-c-language$ docker-compose up -d
 user@host:~/iris-c-language$ docker-compose exec iris bash
 irisowner@ec21549f2063:~$
 ```
-If you change c source code, you need to rebuild an image to reflect the changes.  
-(because I wanted to compile c source codes during container image build time)
+If you edit c source code, you need to rebuild an image to reflect those changes.  
+(because I wanted to compile c source codes during container image build time, not afterwards)
 ```bash
 user@host:~/iris-c-language$ docker-compose build
 ```
-Or copy them into running container and 'make' it.
+Or copy them (from srcext folder) to src folder and 'make' it.
 ```bash
 user@host:~/iris-c-language$ docker-compose exec iris bash
 irisowner@ec21549f2063:~$ cd src
-irisowner@ec21549f2063:~$ make
+irisowner@ec21549f2063:~/src$ cp ../srcext/*.c .
+irisowner@ec21549f2063:~/src$ make
 ```
 
 ## On Windows
-See the last section.
+See Windows section.
 
 ## Various functions and various data (Unicode, Long Ascii String, Long Unicode String) handling.
 ```bash
