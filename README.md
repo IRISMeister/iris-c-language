@@ -1,8 +1,17 @@
-The simpest example of how to build/use IRIS Callin and Callout in Linux.  
+The simpest example of how to build/use IRIS Callin and Callout.
+It covers various functions such as
+- Calling routine w or w/o parameter and return value
+- Calling ClassMethod w or w/o parameter and return value
+- Global set/get longer than 32KB.
+- Returning value longer than 32KB.
+- Unicode handling.
+- Multi-thread in both Windows/Linux.
+
 Callin (callin_misc) will perform various access.  Unicode test is using Japanese as an example.  See log section below.  
 Multi-thread Callin (callin_multithreads) will set ^callinMT global nodes from within each thread.  
 Callout (callout.so) will add two given integers and returns it.  
 
+It dosen't cover $List structure handling because it is not provide by InterSystems.  
 see  
 https://docs.intersystems.com/irislatest/csp/docbook/Doc.View.cls?KEY=BXCI  
 https://docs.intersystems.com/irislatest/csp/docbook/Doc.View.cls?KEY=BGCL_library
@@ -24,7 +33,7 @@ RUN echo 'export LANG=ja_JP.UTF-8' >> ~/.bashrc && echo 'export LANGUAGE="ja_JP:
 # How to RUN
 
 ## Start IRIS on Docker(Ubuntu)
-Nothing to do except starting IRIS. Everything is ready to go.
+Nothing to do except starting IRIS. Everything is ready to go, then.
 ```bash
 user@host:~/$ git clone https://github.com/IRISMeister/iris-c-language.git
 user@host:~/$ cd iris-c-language
