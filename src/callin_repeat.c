@@ -1,5 +1,5 @@
 /*
- *  This is a test code which uses IRIS_EXSTR as returing value from classmethod call.
+ *  This is a test code to repeat calling the same function a specified number of times.
  */
 #pragma warning(disable : 4996)
 #include "iris-callin.h"
@@ -26,7 +26,7 @@ int main(int argc, char * argv[])
   //int termflag = IRIS_TTNONE|IRIS_TTNEVER;
   IRIS_ASTR pusername, ppassword, pexename;
   int	rc,timeout = 0;
-  const char *username="_SYSTEM", *password="SYS",*exename="callin_longvalue";
+  const char *username="_SYSTEM", *password="SYS",*exename="callin_repeat";
 
   strcpy((char *) pusername.str, username);
   pusername.len = (unsigned short)strlen(pusername.str);
@@ -39,32 +39,7 @@ int main(int argc, char * argv[])
   printf("IRISSETDIR rc:%d\n",rc);
 
   rc = IRISSECURESTART(&pusername, &ppassword, &pexename, termflag, timeout, NULL, NULL);
-  char* sMes;
-  switch (rc)
-  {
-    case IRIS_ACCESSDENIED:
-      sMes = "Authentication has failed. Check the audit log for the real authentication error.";
-      break;
-    case IRIS_ALREADYCON:
-      sMes = "Connection already existed. Returned if you call IrisSecureStartH from a $ZF function.";
-      break;
-    case IRIS_CHANGEPASSWORD:
-      sMes = "Password change required. This return value is only returned if you are using InterSystems authentication.";
-      break;
-    case IRIS_CONBROKEN:
-      sMes = "Connection was formed and then broken, and IrisEnd has not been called to clean up.";
-      break;
-    case IRIS_STRTOOLONG:
-      sMes = "prinp or prout is too long.";
-      break;
-    case IRIS_SUCCESS:
-      sMes = "Success.";
-      break;
-    case IRIS_FAILURE:
-    default:
-      sMes = "An unexpected error has occurred.";
-  }
-  printf("IRISSECURESTART Status :%s %d \n",sMes,rc);
+  printf("IRISSECURESTART rc:%d\n",rc);
   if (rc) { 
     IRISEND(); 
     exit(EXIT_FAILURE);

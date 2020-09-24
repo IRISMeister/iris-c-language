@@ -39,7 +39,7 @@ MT_OBJS=\
 MISC_OBJS=\
         $(OUTDIR)\callin_execute.obj $(OUTDIR)\callin_misc.obj $(OUTDIR)\callin_misc_calls.obj $(OUTDIR)\callin_misc_value.obj $(OUTDIR)\shdir.obj
 
-LONG_VAL_OBJS=\
+REPEAT_OBJS=\
         $(OUTDIR)\callin_repeat.obj $(OUTDIR)\callin_misc_calls.obj $(OUTDIR)\shdir.obj
 
 DLL_OBJS=\
@@ -51,8 +51,8 @@ $(OUTDIR)\callin_multithreads.exe : $(MT_OBJS)
 $(OUTDIR)\callin_misc.exe : $(MISC_OBJS)
         $(LINK) $(LINK_FLAGS) /pdb:$(OUTDIR)\callin_misc.pdb /out:$(OUTDIR)\callin_misc.exe $(MISC_OBJS)
 
-$(OUTDIR)\callin_repeat.exe : $(LONG_VAL_OBJS)
-        $(LINK) $(LINK_FLAGS) /pdb:$(OUTDIR)\callin_repeat.pdb /out:$(OUTDIR)\callin_repeat.exe $(LONG_VAL_OBJS)
+$(OUTDIR)\callin_repeat.exe : $(REPEAT_OBJS)
+        $(LINK) $(LINK_FLAGS) /pdb:$(OUTDIR)\callin_repeat.pdb /out:$(OUTDIR)\callin_repeat.exe $(REPEAT_OBJS)
 
 $(OUTDIR)\callout.dll : $(DLL_OBJS)
         $(LINK) $(LINK_DLL_FLAGS) /pdb:$(OUTDIR)\callout.pdb /out:$(OUTDIR)\callout.dll $(DLL_OBJS)

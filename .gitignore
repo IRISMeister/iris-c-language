@@ -8,9 +8,3 @@ src/callin_signal_test
 src/callin_repeat
 src/*.o
 src/lib
-src/sap1238.c
-src/sap1238
-src/sampcallin.c
-src/sampcallint.c
-src/Makefile.cache
-%ZSTART.mac
