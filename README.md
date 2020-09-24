@@ -5,7 +5,7 @@ It covers various functions such as
 - Global set/get longer than 32KB.
 - Returning value longer than 32KB.
 - Unicode handling.
-- Multi-thread in both Windows/Linux.
+- Multi-thread example in both Windows/Linux.
 
 Callin (callin_misc) will perform various access.  Unicode test is using Japanese as an example.  See log section below.  
 Multi-thread Callin (callin_multithreads) will set ^callinMT global nodes from within each thread.  
