@@ -4,7 +4,17 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
+        {
+            "name": "(Windows) Launch",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/x64/callin_misc.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [{"name":"Path","value":"C:\\InterSystems\\IRIS\\bin;%Path%"}],
+            "externalConsole": false
+        },
         {
             "name": "(gdb) Launch",
             "type": "cppdbg",
