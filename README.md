@@ -305,6 +305,10 @@ C:\temp\iris-c-language\src>Set Path=C:\InterSystems\IRIS\bin;%Path%
 C:\temp\iris-c-language\src>x64\callin_misc.exe
 C:\temp\iris-c-language\src>x64\callin_multithreads.exe
 ```
+For callout, use the following dll.
+```
+DEMO>w $ZF(-3,"c:\temp\src\callout.dll","AddInt",2,3)
+```
 If you get C4819 error while compiling callin_misc_value.c,  make sure it is saved as UTF8 with BOM.  
 
 ## From Cache' to IRIS

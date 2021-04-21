@@ -5,6 +5,12 @@
 #include <stdio.h>
 #include <string.h>
 
+int print() {
+   printf(u8"あいうえお\n");
+   fflush(stdout);
+   return ZF_SUCCESS;   /* set the exit status code */
+}
+
 int addTwoIntegers(int a, int b, int *outsum) {
    *outsum = a+b;   /* set value to be returned by the $ZF function call */
    return ZF_SUCCESS;   /* set the exit status code */
@@ -78,11 +84,14 @@ int callRoutine() {
 
    // not a good idea to printf() here...
    printf("return value as STRING :%s\n",returnval);
+   fflush(stdout);
 
    return ZF_SUCCESS;   /* set the exit status code */
 }
 
 ZFBEGIN
+
+   ZFENTRY("Print","",print)
    ZFENTRY("AddInt","iiP",addTwoIntegers)
    ZFENTRY("AddBigInt","ccC",addTwoBigIntegers)
    ZFENTRY("AddIntSave","iiP",addTwoIntegersAndSave)
