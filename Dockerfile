@@ -1,4 +1,4 @@
-FROM store/intersystems/iris-community:2020.1.0.215.0
+FROM store/intersystems/iris-community:2021.1.0.215.3
 
 USER root
 
@@ -35,5 +35,5 @@ RUN iris start $ISC_PACKAGE_INSTANCENAME nostu quietly \
  && rm -f $ISC_PACKAGE_INSTALLDIR/mgr/IRIS.WIJ \
  && rm -f $ISC_PACKAGE_INSTALLDIR/mgr/iris.ids \
  && rm -f $ISC_PACKAGE_INSTALLDIR/mgr/alerts.log \
- && rm -f $ISC_PACKAGE_INSTALLDIR/mgr/journal/* \
- && rm -f $ISC_PACKAGE_INSTALLDIR/mgr/messages.log
+ && rm -f $ISC_PACKAGE_INSTALLDIR/mgr/journal/* 
+# && rm -f $ISC_PACKAGE_INSTALLDIR/mgr/messages.log
