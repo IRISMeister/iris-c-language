@@ -155,6 +155,8 @@ irisowner@9618c833d390:~/src$ iris session iris -U demo
 ノード: 9618c833d390 インスタンス: IRIS
 ```
 ```ObjectScript
+DEMO>d ##class(Verify).CheckResults()
+OK
 DEMO>zw ^test
 ^test="abc"
 ^test(1)=12345
@@ -199,7 +201,7 @@ DEMO>w $E(^long(2),$L(^long(2))-10,*)
 DEMO>h
 ```
 ## Multithreads test.
-You can stop callin_multithreads by Ctrl-c.
+It creates three threads. You can stop callin_multithreads by Ctrl-c.
 ```bash
 irisowner@ec21549f2063:~/src$ ./callin_multithreads
 Starting main process. #140432145268544
@@ -212,7 +214,7 @@ Thread(2) #140432084186880 starting authentication in IRIS'
 Thread(1) #140432092579584 starting test
 Thread(0) #140432100972288 starting test
 Thread(2) #140432084186880 starting test
-^CSignal caught by #140432145268544            <= type Ctrl-c to interrupt
+^CSignal caught by #140432145268544            <= wait a moment and type Ctrl-c to interrupt
 si_signo:2 si_code:128 si_pid:0 si_uid:0
 Ending thread_noiris_main #140432109364992
 Thread(2) #140432084186880 has completed test
@@ -233,7 +235,7 @@ irisowner@ec21549f2063:~/src$ iris session iris -U demo
 ```
 ```ObjectScript
 DEMO>zw ^callinMT
-^callinMT=4
+^callinMT=4  <== node counts varies depending on how long you'd waited before stop it.
 ^callinMT(1)="threadId:140432100972288 @ 2020/06/04 Thu 17:20:35"
 ^callinMT(2)="threadId:140432084186880 @ 2020/06/04 Thu 17:20:36"
 ^callinMT(3)="threadId:140432092579584 @ 2020/06/04 Thu 17:20:37"
@@ -268,9 +270,9 @@ exit
 user@host:~/iris-c-language$
 ```
 
-## Stop IRIS.
+## Remove
 ```bash
-user@host:~/iris-c-language$ docker-compose stop
+user@host:~/iris-c-language$ docker-compose down
 ```
 
 If you want to run callin programs against non-container version of IRIS, you need to execute it as user 'irisowner' or whatever user which belongs to the group you picked when you installed IRIS.  
@@ -344,4 +346,31 @@ char *shdir="C:\\InterSystems\\CACHE\\mgr";
 ```
 ```
 char *shdir="C:\\InterSystems\\IRIS\\mgr";
+```
+
+# misc
+
+You probably need to use the same or higher gcc compiler version.
+
+How to check IRIS compiler version.
+
+```
+irisowner@2ba56e3fa18e:~$ objdump -sj .comment /usr/irissys/bin/irisdb
+
+/usr/irissys/bin/irisdb:     ファイル形式 elf64-x86-64
+
+セクション .comment の内容:
+ 0000 4743433a 20285562 756e7475 2031312e  GCC: (Ubuntu 11.
+ 0010 322e302d 31397562 756e7475 31292031  2.0-19ubuntu1) 1
+ 0020 312e322e 3000                        1.2.0.
+```
+
+How to check current compiler version.
+
+```
+irisowner@2ba56e3fa18e:~$ gcc --version
+gcc (Ubuntu 11.3.0-1ubuntu1~22.04) 11.3.0
+Copyright (C) 2021 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ```

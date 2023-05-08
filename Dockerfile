@@ -1,4 +1,4 @@
-FROM store/intersystems/iris-community:2021.1.0.215.3
+FROM containers.intersystems.com/intersystems/iris-community:2023.1.0.229.0
 
 USER root
 

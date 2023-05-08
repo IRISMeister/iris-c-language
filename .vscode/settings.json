@@ -3,5 +3,20 @@
         "array": "c",
         "string": "c",
         "string_view": "c"
+    },
+    "intersystems.servers": {
+        "iris": {
+            "webServer": {
+                "scheme": "http",
+                "host": "localhost",
+                "port": 52773
+            },
+            "username": "_SYSTEM"
+        }
+    },
+    "objectscript.conn": {
+        "server": "iris",
+        "ns": "DEMO",
+        "active": true
     }
 }
