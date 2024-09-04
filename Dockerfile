@@ -1,4 +1,4 @@
-FROM containers.intersystems.com/intersystems/iris-community:2023.1.0.229.0
+FROM containers.intersystems.com/intersystems/iris-community:2024.1
 
 USER root
 
@@ -8,7 +8,7 @@ RUN apt -y update \
 
 # installing vim just for convenience
 RUN apt -y update \
- && DEBIAN_FRONTEND=noninteractive apt -y install build-essential vim \
+ && DEBIAN_FRONTEND=noninteractive apt -y install build-essential gdb vim \
  && apt clean
 
 USER irisowner
@@ -16,8 +16,8 @@ USER irisowner
 RUN echo 'export LANG=ja_JP.UTF-8' >> ~/.bashrc && echo 'export LANGUAGE="ja_JP:ja"' >> ~/.bashrc \
  && mkdir src iris
 
-COPY src/ /home/irisowner/src/
-COPY project/ /home/irisowner/iris/
+COPY --chown=irisowner:irisowner src/ /home/irisowner/src/
+COPY --chown=irisowner:irisowner project/ /home/irisowner/iris/
 
 RUN cd src && make clean && make
 

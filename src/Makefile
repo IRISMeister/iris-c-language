@@ -1,6 +1,6 @@
 CC            = gcc
 #CFLAGS       = -O1 -I /usr/irissys/dev/iris-callin/include
-CFLAGS        = -g3 -ggdb -O3 -I /usr/irissys/dev/iris-callin/include
+CFLAGS        = -g3 -ggdb -O0 -I /usr/irissys/dev/iris-callin/include
 LDFLAGS       = -L/usr/irissys/bin -Wl,-rpath,/usr/irissys/bin
 LIBS          = -lirisdb
 LIBSMT        = -lirisdbt

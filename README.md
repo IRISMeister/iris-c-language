@@ -37,18 +37,18 @@ Nothing to do except starting IRIS. Everything is ready to go, then.
 ```bash
 user@host:~/$ git clone https://github.com/IRISMeister/iris-c-language.git
 user@host:~/$ cd iris-c-language
-user@host:~/iris-c-language$ docker-compose up -d
-user@host:~/iris-c-language$ docker-compose exec iris bash
+user@host:~/iris-c-language$ docker compose up -d
+user@host:~/iris-c-language$ docker compose exec iris bash
 irisowner@ec21549f2063:~$
 ```
 If you edit c source code, you need to rebuild an image to reflect those changes.  
 (because I wanted to compile c source codes during container image build time, not afterwards)
 ```bash
-user@host:~/iris-c-language$ docker-compose build
+user@host:~/iris-c-language$ docker compose build
 ```
 Or copy them (from srcext folder) to src folder and 'make' it.
 ```bash
-user@host:~/iris-c-language$ docker-compose exec iris bash
+user@host:~/iris-c-language$ docker compose exec iris bash
 irisowner@ec21549f2063:~$ cd src
 irisowner@ec21549f2063:~/src$ cp ../srcext/*.c .
 irisowner@ec21549f2063:~/src$ make
@@ -272,7 +272,7 @@ user@host:~/iris-c-language$
 
 ## Remove
 ```bash
-user@host:~/iris-c-language$ docker-compose down
+user@host:~/iris-c-language$ docker compose down
 ```
 
 If you want to run callin programs against non-container version of IRIS, you need to execute it as user 'irisowner' or whatever user which belongs to the group you picked when you installed IRIS.  
@@ -373,4 +373,13 @@ gcc (Ubuntu 11.3.0-1ubuntu1~22.04) 11.3.0
 Copyright (C) 2021 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+```
+
+How to analyze core dump
+```
+irisowner@da909659f959:~$ cd DEMO
+irisowner@da909659f959:~/DEMO$ ls
+IRIS.DAT  core.1064  iris.lck  stream
+irisowner@da909659f959:~/DEMO$ gdb /usr/irissys/bin/irisdb ./core.1064
+(gdb) bt
 ```
