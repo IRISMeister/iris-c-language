@@ -1,4 +1,4 @@
-FROM irepo.intersystems.com/intersystems/iris-community:latest-em
+FROM intersystemsdc/iris-community
 
 USER root
 
@@ -19,7 +19,7 @@ RUN echo 'export LANG=ja_JP.UTF-8' >> ~/.bashrc && echo 'export LANGUAGE="ja_JP:
 COPY --chown=irisowner:irisowner src/ /home/irisowner/src/
 COPY --chown=irisowner:irisowner project/ /home/irisowner/iris/
 
-RUN cd src && make clean && make
+RUN cd /home/irisowner/src/ && make clean && make
 
 RUN iris start $ISC_PACKAGE_INSTANCENAME quietly \ 
  && printf 'Do ##class(Config.NLS.Locales).Install("jpuw") h\n' | iris session $ISC_PACKAGE_INSTANCENAME -U %SYS \
