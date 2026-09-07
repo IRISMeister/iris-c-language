@@ -33,6 +33,13 @@ RUN echo 'export LANG=ja_JP.UTF-8' >> ~/.bashrc && echo 'export LANGUAGE="ja_JP:
 # How to RUN
 
 ## Start IRIS on Docker(Ubuntu)
+
+Please change [Dockerfile](./Dockerfile) as you see fit.  Any official/community image from intersystems (iris-community, iris, irisirishealth...) should work because it's not relying on anything.
+
+>FROM irepo.intersystems.com/intersystems/iris-community:latest-em  
+>FROM irepo.intersystems.com/intersystems/iris:latest-em  
+>FROM intersystemsdc/iris-community  
+
 Nothing to do except starting IRIS. Everything is ready to go, then.
 ```bash
 user@host:~/$ git clone https://github.com/IRISMeister/iris-c-language.git
@@ -49,7 +56,7 @@ user@host:~/iris-c-language$ docker compose build
 Or copy them (from srcext folder) to src folder and 'make' it.
 ```bash
 user@host:~/iris-c-language$ docker compose exec iris bash
-irisowner@ec21549f2063:~$ cd src
+irisowner@ec21549f2063:~$ cd /home/irisowner/src/
 irisowner@ec21549f2063:~/src$ cp ../srcext/*.c .
 irisowner@ec21549f2063:~/src$ make
 ```
@@ -59,7 +66,7 @@ See Windows section.
 
 ## Various functions and various data (Unicode, Long Ascii String, Long Unicode String) handling.
 ```bash
-irisowner@9618c833d390:~$ cd src
+irisowner@9618c833d390:~$ cd /home/irisowner/src/
 irisowner@9618c833d390:~/src$ ./callin_misc
 IRISSETDIR rc:0
 IRISSECURESTART Status :Success. 0

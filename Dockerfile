@@ -1,4 +1,5 @@
-FROM intersystemsdc/iris-community
+FROM irepo.intersystems.com/intersystems/iris-community:latest-em
+#FROM intersystemsdc/iris-community 
 
 USER root
 
